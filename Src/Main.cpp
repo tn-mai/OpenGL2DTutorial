@@ -37,6 +37,11 @@ int main()
     return 1;
   }
 
+  const GLubyte* renderer = glGetString(GL_RENDERER);
+  std::cout << "Renderer: " << renderer << std::endl;
+  const GLubyte* version = glGetString(GL_VERSION);
+  std::cout << "Version: " << version << std::endl;
+
   // ƒƒCƒ“ƒ‹[ƒv.
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
