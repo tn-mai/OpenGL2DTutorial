@@ -3,42 +3,32 @@
 */
 #include "GLFWEW.h"
 #include "Shader.h"
+#include "Texture.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <iostream>
 
-/// 3D座標型.
-struct Position
-{
-  float x, y, z;
-};
-
-/// RGBAカラー型.
-struct Color
-{
-  float r, g, b, a;
-};
-
 /// 頂点データ型.
 struct Vertex
 {
-  Position position; ///< 座標
-  Color color; ///< 色
+  glm::vec3 position; ///< 座標.
+  glm::vec4 color; ///< 色.
+  glm::vec2 texCoord; ///< テクスチャ座標.
 };
 
 /// 頂点データ.
 const Vertex vertices[] = {
-  { {-0.5f, -0.3f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f} },
-  { { 0.3f, -0.3f, 0.5f}, {0.0f, 1.0f, 0.0f, 1.0f} },
-  { { 0.3f,  0.5f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f} },
-  { {-0.5f,  0.5f, 0.5f}, {1.0f, 0.0f, 0.0f, 1.0f} },
+  { {-0.5f, -0.3f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} },
+  { { 0.3f, -0.3f, 0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}, { 1.0f, 0.0f} },
+  { { 0.3f,  0.5f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },
+  { {-0.5f,  0.5f, 0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f} },
 
-  { {-0.3f,  0.3f, 0.1f}, {0.0f, 0.0f, 1.0f, 1.0f} },
-  { {-0.3f, -0.5f, 0.1f}, {0.0f, 1.0f, 1.0f, 1.0f} },
-  { { 0.5f, -0.5f, 0.1f}, {0.0f, 0.0f, 1.0f, 1.0f} },
-  { { 0.5f, -0.5f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f} },
-  { { 0.5f,  0.3f, 0.1f}, {1.0f, 1.0f, 0.0f, 1.0f} },
-  { {-0.3f,  0.3f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f} },
+  { {-0.3f,  0.3f, 0.1f}, {0.0f, 0.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} },
+  { {-0.3f, -0.5f, 0.1f}, {0.0f, 1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} },
+  { { 0.5f, -0.5f, 0.1f}, {0.0f, 0.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },
+  { { 0.5f, -0.5f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f} },
+  { { 0.5f,  0.3f, 0.1f}, {1.0f, 1.0f, 0.0f, 1.0f}, { 1.0f, 1.0f} },
+  { {-0.3f,  0.3f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f} },
 };
 
 /// インデックスデータ.
@@ -119,6 +109,7 @@ GLuint CreateVAO(GLuint vbo, GLuint ibo)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
   SetVertexAttribPointer(0, Vertex, position);
   SetVertexAttribPointer(1, Vertex, color);
+  SetVertexAttribPointer(2, Vertex, texCoord);
   glBindVertexArray(0);
   glDeleteBuffers(1, &ibo);
   glDeleteBuffers(1, &vbo);
@@ -138,6 +129,20 @@ int main()
   const GLuint vao = CreateVAO(vbo, ibo);
   const GLuint shaderProgram = Shader::CreateProgramFromFile("Res/Tutorial.vert", "Res/Tutorial.frag");
   if (!vbo || !ibo || !vao || !shaderProgram) {
+    return 1;
+  }
+
+  // テクスチャデータ.
+  static const uint32_t textureData[] = {
+    0xffffffff, 0xffcccccc, 0xffffffff, 0xffcccccc, 0xffffffff,
+    0xff888888, 0xffffffff, 0xff888888, 0xffffffff, 0xff888888,
+    0xffffffff, 0xff444444, 0xffffffff, 0xff444444, 0xffffffff,
+    0xff000000, 0xffffffff, 0xff000000, 0xffffffff, 0xff000000,
+    0xffffffff, 0xff000000, 0xffffffff, 0xff000000, 0xffffffff,
+  };
+
+  TexturePtr tex = Texture::Create(5, 5, GL_RGBA8, GL_RGBA, textureData);
+  if (!tex) {
     return 1;
   }
 
@@ -162,6 +167,13 @@ int main()
       const glm::mat4x4 matView = glm::lookAt(viewPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
       const glm::mat4x4 matMVP = matProj * matView;
       glUniformMatrix4fv(matMVPLoc, 1, GL_FALSE, &matMVP[0][0]);
+    }
+
+    const GLint colorSamplerLoc = glGetUniformLocation(shaderProgram, "colorSampler");
+    if (colorSamplerLoc >= 0) {
+      glUniform1i(colorSamplerLoc, 0);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, tex->Id());
     }
 
     glBindVertexArray(vao);
