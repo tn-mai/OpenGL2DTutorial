@@ -47,27 +47,6 @@ const GLuint indices[] = {
   4, 5, 6, 7, 8, 9,
 };
 
-/// 頂点シェーダ.
-static const char* vsCode =
-  "#version 410\n"
-  "layout(location=0) in vec3 vPosition;"
-  "layout(location=1) in vec4 vColor;"
-  "layout(location=0) out vec4 outColor;"
-  "uniform mat4x4 matMVP;"
-  "void main() {"
-  "  outColor = vColor;"
-  "  gl_Position = matMVP * vec4(vPosition, 1.0);"
-  "}";
-
-/// フラグメントシェーダ.
-static const char* fsCode =
-  "#version 410\n"
-  "layout(location=0) in vec4 inColor;"
-  "out vec4 fragColor;"
-  "void main() {"
-  "  fragColor = inColor;"
-  "}";
-
 /**
 * Vertex Buffer Objectを作成する.
 *
