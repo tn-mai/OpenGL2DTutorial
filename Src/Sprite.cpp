@@ -91,12 +91,23 @@ GLuint CreateVAO(GLuint vbo, GLuint ibo)
 }
 
 /**
-* コンストラクタ.
+* Spriteコンストラクタ.
 */
 Sprite::Sprite(const TexturePtr& tex) :
   texture(tex),
   rect({ glm::vec2(), glm::vec2(tex->Width(), tex->Height()) })
 {
+}
+
+/**
+* SpriteRendererデストラクタ.
+*/
+SpriteRenderer::~SpriteRenderer()
+{
+  glDeleteProgram(shaderProgram);
+  glDeleteVertexArrays(1, &vao);
+  glDeleteBuffers(1, &ibo);
+  glDeleteBuffers(1, &vbo);
 }
 
 /**
@@ -127,17 +138,6 @@ bool SpriteRenderer::Init(size_t maxSpriteCount)
 
   vboCapacity = static_cast<GLsizei>(4 * maxSpriteCount);
   return true;
-}
-
-/**
-* デストラクタ.
-*/
-SpriteRenderer::~SpriteRenderer()
-{
-  glDeleteProgram(shaderProgram);
-  glDeleteVertexArrays(1, &vao);
-  glDeleteBuffers(1, &ibo);
-  glDeleteBuffers(1, &vbo);
 }
 
 /**
