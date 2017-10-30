@@ -135,6 +135,7 @@
     <None Include="Res\Tutorial.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\GamePad.h" />
     <ClInclude Include="Src\GLFWEW.h" />
     <ClInclude Include="Src\Shader.h" />
     <ClInclude Include="Src\Sprite.h" />
