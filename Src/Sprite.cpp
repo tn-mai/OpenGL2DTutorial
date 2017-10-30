@@ -119,7 +119,9 @@ SpriteRenderer::~SpriteRenderer()
 }
 
 /**
-* スプライト管理クラスを初期化する.
+* スプライト描画クラスを初期化する.
+*
+* @param maxSpriteCount 描画可能な最大スプライト数.
 *
 * @retval true  初期化成功.
 * @retval false 初期化失敗.
@@ -149,8 +151,7 @@ bool SpriteRenderer::Init(size_t maxSpriteCount)
 }
 
 /**
-*
-*
+* 頂点データの作成を開始する.
 */
 void SpriteRenderer::BeginUpdate()
 {
@@ -160,11 +161,18 @@ void SpriteRenderer::BeginUpdate()
 }
 
 /**
+* 頂点データを追加する.
 *
+* @param sprite 頂点データの元になるスプライト.
 *
+* @retval true  追加成功.
+* @retval false 頂点バッファが満杯で追加できない.
 */
-void SpriteRenderer::AddVertices(const Sprite& sprite)
+bool SpriteRenderer::AddVertices(const Sprite& sprite)
 {
+  if (vboSize >= vboCapacity) {
+    return false;
+  }
   const TexturePtr& texture = sprite.Texture();
   const glm::vec2 textureSize(texture->Width(), texture->Height());
   const glm::vec2 reciprocalSize(glm::vec2(1) / textureSize);
@@ -193,11 +201,11 @@ void SpriteRenderer::AddVertices(const Sprite& sprite)
 
   pVBO += 4;
   vboSize += 4;
+  return true;
 }
 
 /**
-*
-*
+* 頂点データの作成を終了する.
 */
 void SpriteRenderer::EndUpdate()
 {
@@ -207,8 +215,10 @@ void SpriteRenderer::EndUpdate()
 }
 
 /**
+* スプライトを描画する.
 *
-*
+* @param texture    描画に使用するテクスチャ.
+* @param screenSize 画面サイズ.
 */
 void SpriteRenderer::Draw(const TexturePtr& texture, const glm::vec2& screenSize) const
 {

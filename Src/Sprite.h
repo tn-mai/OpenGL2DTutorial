@@ -59,7 +59,7 @@ public:
 
   bool Init(size_t maxSpriteCount);
   void BeginUpdate();
-  void AddVertices(const Sprite&);
+  bool AddVertices(const Sprite&);
   void EndUpdate();
   void Draw(const TexturePtr&, const glm::vec2&) const;
 
