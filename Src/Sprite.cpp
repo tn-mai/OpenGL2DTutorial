@@ -180,22 +180,22 @@ bool SpriteRenderer::AddVertices(const Sprite& sprite)
   Rect rect = sprite.Rectangle();
   rect.origin *= reciprocalSize;
   rect.size *= reciprocalSize;
-  const glm::vec3 lb = sprite.Position();
-  const glm::vec3 rt = lb + glm::vec3(sprite.Rectangle().size * sprite.Scale(), 0);
+  const glm::vec3 center = sprite.Position();
+  const glm::vec2 halfSize = sprite.Rectangle().size * 0.5f * sprite.Scale();
 
-  pVBO[0].position = lb;
+  pVBO[0].position = center + glm::vec3(-halfSize.x, -halfSize.y, 0);
   pVBO[0].color = sprite.Color();
   pVBO[0].texCoord = rect.origin;
 
-  pVBO[1].position = glm::vec3(lb.x, rt.y, lb.z);
+  pVBO[1].position = center + glm::vec3(-halfSize.x, halfSize.y, 0);
   pVBO[1].color = sprite.Color();
   pVBO[1].texCoord = glm::vec2(rect.origin.x, rect.origin.y + rect.size.y);
 
-  pVBO[2].position = glm::vec3(rt.x, rt.y, lb.z);
+  pVBO[2].position = center + glm::vec3(halfSize.x, halfSize.y, 0);
   pVBO[2].color = sprite.Color();
   pVBO[2].texCoord = rect.origin + rect.size;
 
-  pVBO[3].position = glm::vec3(rt.x, lb.y, lb.z);
+  pVBO[3].position = center + glm::vec3(halfSize.x, -halfSize.y, 0);
   pVBO[3].color = sprite.Color();
   pVBO[3].texCoord = glm::vec2(rect.origin.x + rect.size.x, rect.origin.y);
 
@@ -230,10 +230,6 @@ void SpriteRenderer::Draw(const TexturePtr& texture, const glm::vec2& screenSize
 
   const GLint matMVPLoc = glGetUniformLocation(shaderProgram, "matMVP");
   if (matMVPLoc >= 0) {
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    const GLfloat w = static_cast<GLfloat>(viewport[2]);
-    const GLfloat h = static_cast<GLfloat>(viewport[3]);
     const glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), screenSize.x / screenSize.y, 200.0f, 1200.0f);
     const glm::mat4x4 matView = glm::lookAt(glm::vec3(0, 0, glm::tan(glm::radians(90.0f - 22.5f)) * screenSize.y * 0.5f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     const glm::mat4x4 matMVP = matProj * matView;
