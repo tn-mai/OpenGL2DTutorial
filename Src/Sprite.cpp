@@ -104,10 +104,18 @@ Sprite::Sprite(const TexturePtr& tex) :
 */
 SpriteRenderer::~SpriteRenderer()
 {
-  glDeleteProgram(shaderProgram);
-  glDeleteVertexArrays(1, &vao);
-  glDeleteBuffers(1, &ibo);
-  glDeleteBuffers(1, &vbo);
+  if (shaderProgram) {
+    glDeleteProgram(shaderProgram);
+  }
+  if (vao) {
+    glDeleteVertexArrays(1, &vao);
+  }
+  if (ibo) {
+    glDeleteBuffers(1, &ibo);
+  }
+  if (vbo) {
+    glDeleteBuffers(1, &vbo);
+  }
 }
 
 /**
