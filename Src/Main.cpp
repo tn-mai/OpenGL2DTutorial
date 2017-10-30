@@ -17,11 +17,14 @@ int main()
     return 1;
   }
 
+  TexturePtr tex = Texture::LoadFromFile("Res/Sample.bmp");
+  if (!tex) {
+    return 1;
+  }
   SpriteRenderer spriteRenderer;
   spriteRenderer.Init(10000);
-
-  TexturePtr tex = Texture::LoadFromFile("Res/Sample.bmp");
   Sprite sprite(tex);
+  sprite.Scale(glm::vec2(800.0f / tex->Width(), 600.0f / tex->Height()));
 
   glEnable(GL_DEPTH_TEST);
 
