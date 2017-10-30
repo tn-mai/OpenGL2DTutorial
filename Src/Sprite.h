@@ -5,7 +5,6 @@
 #define SPRITE_H_INCLUDED
 #include "Texture.h"
 #include <glm/glm.hpp>
-#include <vector>
 
 /**
 * ‹éŒ`\‘¢‘Ì.
