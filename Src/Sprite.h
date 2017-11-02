@@ -42,7 +42,7 @@ private:
   Rect rect = { glm::vec2(0, 0), glm::vec2(1, 1) };
   glm::vec3 position;
   glm::vec2 scale = glm::vec2(1, 1);
-  glm::vec4 color = glm::vec4(1, 1, 1, 1);
+  glm::vec4 color = glm::vec4(1);
 };
 
 /**
