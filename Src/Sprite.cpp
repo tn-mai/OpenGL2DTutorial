@@ -187,17 +187,17 @@ bool SpriteRenderer::AddVertices(const Sprite& sprite)
   pVBO[0].color = sprite.Color();
   pVBO[0].texCoord = rect.origin;
 
-  pVBO[1].position = center + glm::vec3(-halfSize.x, halfSize.y, 0);
+  pVBO[1].position = center + glm::vec3(halfSize.x, -halfSize.y, 0);
   pVBO[1].color = sprite.Color();
-  pVBO[1].texCoord = glm::vec2(rect.origin.x, rect.origin.y + rect.size.y);
+  pVBO[1].texCoord = glm::vec2(rect.origin.x + rect.size.x, rect.origin.y);
 
   pVBO[2].position = center + glm::vec3(halfSize.x, halfSize.y, 0);
   pVBO[2].color = sprite.Color();
   pVBO[2].texCoord = rect.origin + rect.size;
 
-  pVBO[3].position = center + glm::vec3(halfSize.x, -halfSize.y, 0);
+  pVBO[3].position = center + glm::vec3(-halfSize.x, halfSize.y, 0);
   pVBO[3].color = sprite.Color();
-  pVBO[3].texCoord = glm::vec2(rect.origin.x + rect.size.x, rect.origin.y);
+  pVBO[3].texCoord = glm::vec2(rect.origin.x, rect.origin.y + rect.size.y);
 
   pVBO += 4;
   vboSize += 4;
