@@ -5,9 +5,6 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Sprite.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <vector>
-#include <iostream>
 
 /// エントリーポイント.
 int main()
@@ -27,6 +24,7 @@ int main()
   sprite.Scale(glm::vec2(800.0f / tex->Width(), 600.0f / tex->Height()));
 
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
 
   // メインループ.
   while (!window.ShouldClose()) {
