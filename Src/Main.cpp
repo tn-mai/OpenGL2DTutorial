@@ -14,14 +14,18 @@ int main()
     return 1;
   }
 
-  TexturePtr tex = Texture::LoadFromFile("Res/Sample.bmp");
+  TexturePtr tex = Texture::LoadFromFile("Res/Objects.dds");
   if (!tex) {
     return 1;
   }
   SpriteRenderer spriteRenderer;
   spriteRenderer.Init(10000);
   Sprite sprite(tex);
-  sprite.Scale(glm::vec2(800.0f / tex->Width(), 600.0f / tex->Height()));
+  sprite.Rectangle({glm::vec2(0 ,0), glm::vec2(64, 32)});
+
+  Sprite boss(tex);
+  boss.Rectangle({glm::vec2(320 ,128), glm::vec2(128, 256)});
+  boss.Position(glm::vec3(256, 0, 0));
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
@@ -50,6 +54,7 @@ int main()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     spriteRenderer.BeginUpdate();
+    spriteRenderer.AddVertices(boss);
     spriteRenderer.AddVertices(sprite);
     spriteRenderer.EndUpdate();
     spriteRenderer.Draw(tex, glm::vec2(800, 600));
