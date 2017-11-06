@@ -158,6 +158,7 @@ void SpriteRenderer::BeginUpdate()
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   pVBO = static_cast<Vertex*>(glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * vboCapacity, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
   vboSize = 0;
+  ClearDrawData();
 }
 
 /**
@@ -201,6 +202,17 @@ bool SpriteRenderer::AddVertices(const Sprite& sprite)
 
   pVBO += 4;
   vboSize += 4;
+
+  if (drawDataList.empty()) {
+    drawDataList.push_back({ 6, 0, sprite.Texture() });
+  } else {
+    auto& data = drawDataList.back();
+    if (data.texture == sprite.Texture()) {
+      data.count += 6;
+    } else {
+      drawDataList.push_back({ 6, data.offset + data.count * sizeof(GLushort), sprite.Texture() });
+    }
+  }
   return true;
 }
 
@@ -240,10 +252,20 @@ void SpriteRenderer::Draw(const TexturePtr& texture, const glm::vec2& screenSize
   if (colorSamplerLoc >= 0) {
     glUniform1i(colorSamplerLoc, 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture->Id());
   }
 
   glBindVertexArray(vao);
-  glDrawElements(GL_TRIANGLES, (vboSize / 4) * 6, GL_UNSIGNED_SHORT, 0);
+  for (const auto& data : drawDataList) {
+    glBindTexture(GL_TEXTURE_2D, data.texture->Id());
+    glDrawElements(GL_TRIANGLES, data.count, GL_UNSIGNED_SHORT, reinterpret_cast<const GLvoid*>(data.offset));
+  }
   glBindVertexArray(0);
+}
+
+/**
+* スプライト描画データを消去する.
+*/
+void SpriteRenderer::ClearDrawData()
+{
+  drawDataList.clear();
 }

@@ -5,6 +5,7 @@
 #define SPRITE_H_INCLUDED
 #include "Texture.h"
 #include <glm/glm.hpp>
+#include <vector>
 
 /**
 * 矩形構造体.
@@ -61,6 +62,7 @@ public:
   bool AddVertices(const Sprite&);
   void EndUpdate();
   void Draw(const TexturePtr&, const glm::vec2&) const;
+  void ClearDrawData();
 
 private:
   GLuint vbo = 0;
@@ -70,6 +72,13 @@ private:
   GLsizei vboCapacity = 0;        ///< VBOに格納可能な最大頂点数.
   GLsizei vboSize = 0;            ///< VBOに格納されている頂点数.
   struct Vertex* pVBO = nullptr;  ///< VBOへのポインタ.
+
+  struct DrawData {
+    size_t count;
+    size_t offset;
+    TexturePtr texture;
+  };
+  std::vector<DrawData> drawDataList;
 };
 
 #endif // SPRITE_H_INCLUDED
