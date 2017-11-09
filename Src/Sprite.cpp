@@ -171,7 +171,7 @@ void SpriteRenderer::BeginUpdate()
 */
 bool SpriteRenderer::AddVertices(const Sprite& sprite)
 {
-  if (vboSize >= vboCapacity) {
+  if (!pVBO || vboSize >= vboCapacity) {
     return false;
   }
   const TexturePtr& texture = sprite.Texture();
