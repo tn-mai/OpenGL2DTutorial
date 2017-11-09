@@ -61,7 +61,7 @@ public:
   void BeginUpdate();
   bool AddVertices(const Sprite&);
   void EndUpdate();
-  void Draw(const TexturePtr&, const glm::vec2&) const;
+  void Draw(const glm::vec2&) const;
   void ClearDrawData();
 
 private:

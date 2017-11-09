@@ -65,7 +65,7 @@ int main()
     spriteRenderer.AddVertices(boss);
     spriteRenderer.AddVertices(sprite);
     spriteRenderer.EndUpdate();
-    spriteRenderer.Draw(tex, glm::vec2(800, 600));
+    spriteRenderer.Draw(glm::vec2(800, 600));
 
     window.SwapBuffers();
   }

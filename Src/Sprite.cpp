@@ -232,7 +232,7 @@ void SpriteRenderer::EndUpdate()
 * @param texture    描画に使用するテクスチャ.
 * @param screenSize 画面サイズ.
 */
-void SpriteRenderer::Draw(const TexturePtr& texture, const glm::vec2& screenSize) const
+void SpriteRenderer::Draw(const glm::vec2& screenSize) const
 {
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
