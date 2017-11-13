@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="Src\GLFWEW.cpp" />
     <ClCompile Include="Src\Main.cpp" />
+    <ClCompile Include="Src\Node.cpp" />
     <ClCompile Include="Src\Shader.cpp" />
     <ClCompile Include="Src\Sprite.cpp" />
     <ClCompile Include="Src\Texture.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Src\DXGIFormat.h" />
     <ClInclude Include="Src\GamePad.h" />
     <ClInclude Include="Src\GLFWEW.h" />
+    <ClInclude Include="Src\Node.h" />
     <ClInclude Include="Src\Shader.h" />
     <ClInclude Include="Src\Sprite.h" />
     <ClInclude Include="Src\Texture.h" />

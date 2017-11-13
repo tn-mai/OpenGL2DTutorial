@@ -92,57 +92,6 @@ GLuint CreateVAO(GLuint vbo, GLuint ibo)
 }
 
 /**
-* 子ノードを追加する.
-*/
-void Node::AddChild(Node* node)
-{
-  node->parent = this;
-  children.push_back(node);
-}
-
-/**
-* 子ノードを外す.
-*/
-void Node::RemoveChild(Node* node)
-{
-  auto itr = std::find(children.begin(), children.end(), node);
-  if (itr != children.end()) {
-    (*itr)->parent = nullptr;
-    children.erase(itr);
-  }
-}
-
-/**
-* 親ノードから外れる.
-*/
-void Node::RemoveFromParent()
-{
-  if (!parent) {
-    return;
-  }
-  parent->RemoveChild(this);
-}
-
-/**
-* 
-*/
-void Node::Update(const glm::mat4x4& parentTransform)
-{
-  transform = glm::scale(glm::translate(parentTransform, position), glm::vec3(scale, 1.0f));
-  for (auto& e : children) {
-    e->Update(transform);
-  }
-}
-
-/**
-*
-*/
-void Node::Draw(SpriteRenderer& renderer) const
-{
-  // 何もしない.
-}
-
-/**
 * Spriteコンストラクタ.
 */
 Sprite::Sprite(const TexturePtr& tex) :
@@ -152,7 +101,9 @@ Sprite::Sprite(const TexturePtr& tex) :
 }
 
 /**
+* スプライトを描画する.
 *
+* @param 描画を行うレンダラー.
 */
 void Sprite::Draw(SpriteRenderer& renderer) const
 {
@@ -286,28 +237,39 @@ void SpriteRenderer::EndUpdate()
   pVBO = nullptr;
 }
 
-void SpriteRenderer::Update(const Node* node)
+/**
+* シーングラフを描画する.
+*
+* @param node シーングラフのルートノード.
+*/
+void SpriteRenderer::Update(const Node& node)
 {
-  std::vector<const Node*> spriteList;
-  spriteList.reserve(1024);
+  std::vector<const Node*> nodeList;
+  nodeList.reserve(1024);
 
-  Update(node, spriteList);
-  std::stable_sort(spriteList.begin(), spriteList.end(), [](const Node* lhs, const Node* rhs) {
+  MakeNodeList(node, nodeList);
+  std::stable_sort(nodeList.begin(), nodeList.end(), [](const Node* lhs, const Node* rhs) {
     return lhs->Position().z < rhs->Position().z;
   });
 
   BeginUpdate();
-  for (const auto e : spriteList) {
+  for (const auto e : nodeList) {
     e->Draw(*this);
   }
   EndUpdate();
 }
 
-void SpriteRenderer::Update(const Node* node, std::vector<const Node*>& spriteList)
+/**
+* ノードリストを更新する.
+*
+* @param node
+* @param spriteList 描画するノードのリスト.
+*/
+void SpriteRenderer::MakeNodeList(const Node& node, std::vector<const Node*>& nodeList)
 {
-  spriteList.push_back(node);
-  for (auto e : node->Children()) {
-    Update(e, spriteList);
+  nodeList.push_back(&node);
+  for (auto e : node.Children()) {
+    MakeNodeList(*e, nodeList);
   }
 }
 

@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Sprite.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 /// エントリーポイント.
 int main()
@@ -22,24 +23,37 @@ int main()
 
   SpriteRenderer spriteRenderer;
   spriteRenderer.Init(10000);
-  Node rootNode;
-  rootNode.name = "rootNode";
 
   Sprite sprite(tex);
   sprite.Rectangle({glm::vec2(0 ,0), glm::vec2(64, 32)});
-  sprite.name = "player";
+  sprite.Name("player");
 
   Sprite boss(tex);
   boss.Rectangle({glm::vec2(320 ,128), glm::vec2(128, 256)});
   boss.Position(glm::vec3(256, 0, 0));
-  boss.name = "boss";
+  boss.Name("boss");
 
   Sprite background(texBg);
-  background.name = "bg";
+  background.Name("bg");
 
+  Node rootNode;
+  rootNode.Name("rootNode");
   rootNode.AddChild(&background);
   rootNode.AddChild(&boss);
   rootNode.AddChild(&sprite);
+
+  Node escortNode;
+  escortNode.Position(glm::vec3(-16, 0, 0));
+  boss.AddChild(&escortNode);
+
+  std::vector<Sprite> escortList(16, Sprite(tex));
+  for (size_t i = 0; i < escortList.size(); ++i) {
+    const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / static_cast<float>(escortList.size())), glm::vec3(0, 0, 1));
+    const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
+    escortList[i].Position(pos);
+    escortList[i].Rectangle({glm::vec2(480, 0), glm::vec2(32, 32)});
+    escortNode.AddChild(&escortList[i]);
+  }
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
@@ -64,14 +78,19 @@ int main()
     }
     if (vec.x || vec.y) {
       vec = glm::normalize(vec);
-      rootNode.Position(rootNode.Position() + vec);
+      sprite.Position(sprite.Position() + vec);
     }
+
+    escortNode.Rotation(escortNode.Rotation() + glm::radians(0.05f));
+    for (auto e : escortNode.Children()) {
+      e->Rotation(-escortNode.Rotation());
+    }
+
+    rootNode.UpdateRecursive(1.0f / 60.0f);
+    spriteRenderer.Update(rootNode);
 
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    rootNode.Update(glm::mat4x4());
-    spriteRenderer.Update(&rootNode);
     spriteRenderer.Draw(glm::vec2(800, 600));
 
     window.SwapBuffers();
