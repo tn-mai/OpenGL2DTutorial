@@ -22,14 +22,24 @@ int main()
 
   SpriteRenderer spriteRenderer;
   spriteRenderer.Init(10000);
+  Node rootNode;
+  rootNode.name = "rootNode";
+
   Sprite sprite(tex);
   sprite.Rectangle({glm::vec2(0 ,0), glm::vec2(64, 32)});
+  sprite.name = "player";
 
   Sprite boss(tex);
   boss.Rectangle({glm::vec2(320 ,128), glm::vec2(128, 256)});
   boss.Position(glm::vec3(256, 0, 0));
+  boss.name = "boss";
 
   Sprite background(texBg);
+  background.name = "bg";
+
+  rootNode.AddChild(&background);
+  rootNode.AddChild(&boss);
+  rootNode.AddChild(&sprite);
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
@@ -54,17 +64,14 @@ int main()
     }
     if (vec.x || vec.y) {
       vec = glm::normalize(vec);
-      sprite.Position(sprite.Position() + vec);
+      rootNode.Position(rootNode.Position() + vec);
     }
 
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    spriteRenderer.BeginUpdate();
-    spriteRenderer.AddVertices(background);
-    spriteRenderer.AddVertices(boss);
-    spriteRenderer.AddVertices(sprite);
-    spriteRenderer.EndUpdate();
+    rootNode.Update(glm::mat4x4());
+    spriteRenderer.Update(&rootNode);
     spriteRenderer.Draw(glm::vec2(800, 600));
 
     window.SwapBuffers();

@@ -4,6 +4,7 @@
 #include "Sprite.h"
 #include "Shader.h"
 #include <vector>
+#include <algorithm>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -91,12 +92,71 @@ GLuint CreateVAO(GLuint vbo, GLuint ibo)
 }
 
 /**
+* 子ノードを追加する.
+*/
+void Node::AddChild(Node* node)
+{
+  node->parent = this;
+  children.push_back(node);
+}
+
+/**
+* 子ノードを外す.
+*/
+void Node::RemoveChild(Node* node)
+{
+  auto itr = std::find(children.begin(), children.end(), node);
+  if (itr != children.end()) {
+    (*itr)->parent = nullptr;
+    children.erase(itr);
+  }
+}
+
+/**
+* 親ノードから外れる.
+*/
+void Node::RemoveFromParent()
+{
+  if (!parent) {
+    return;
+  }
+  parent->RemoveChild(this);
+}
+
+/**
+* 
+*/
+void Node::Update(const glm::mat4x4& parentTransform)
+{
+  transform = glm::scale(glm::translate(parentTransform, position), glm::vec3(scale, 1.0f));
+  for (auto& e : children) {
+    e->Update(transform);
+  }
+}
+
+/**
+*
+*/
+void Node::Draw(SpriteRenderer& renderer) const
+{
+  // 何もしない.
+}
+
+/**
 * Spriteコンストラクタ.
 */
 Sprite::Sprite(const TexturePtr& tex) :
   texture(tex),
   rect({ glm::vec2(), glm::vec2(tex->Width(), tex->Height()) })
 {
+}
+
+/**
+*
+*/
+void Sprite::Draw(SpriteRenderer& renderer) const
+{
+  renderer.AddVertices(*this);
 }
 
 /**
@@ -181,22 +241,22 @@ bool SpriteRenderer::AddVertices(const Sprite& sprite)
   Rect rect = sprite.Rectangle();
   rect.origin *= reciprocalSize;
   rect.size *= reciprocalSize;
-  const glm::vec3 center = sprite.Position();
-  const glm::vec2 halfSize = sprite.Rectangle().size * 0.5f * sprite.Scale();
+  const glm::vec2 halfSize = sprite.Rectangle().size * 0.5f;
+  const glm::mat4x4& transform = sprite.Transform();
 
-  pVBO[0].position = center + glm::vec3(-halfSize.x, -halfSize.y, 0);
+  pVBO[0].position = transform * glm::vec4(-halfSize.x, -halfSize.y, 0, 1);
   pVBO[0].color = sprite.Color();
   pVBO[0].texCoord = rect.origin;
 
-  pVBO[1].position = center + glm::vec3(halfSize.x, -halfSize.y, 0);
+  pVBO[1].position = transform * glm::vec4(halfSize.x, -halfSize.y, 0, 1);
   pVBO[1].color = sprite.Color();
   pVBO[1].texCoord = glm::vec2(rect.origin.x + rect.size.x, rect.origin.y);
 
-  pVBO[2].position = center + glm::vec3(halfSize.x, halfSize.y, 0);
+  pVBO[2].position = transform * glm::vec4(halfSize.x, halfSize.y, 0, 1);
   pVBO[2].color = sprite.Color();
   pVBO[2].texCoord = rect.origin + rect.size;
 
-  pVBO[3].position = center + glm::vec3(-halfSize.x, halfSize.y, 0);
+  pVBO[3].position = transform * glm::vec4(-halfSize.x, halfSize.y, 0, 1);
   pVBO[3].color = sprite.Color();
   pVBO[3].texCoord = glm::vec2(rect.origin.x, rect.origin.y + rect.size.y);
 
@@ -224,6 +284,31 @@ void SpriteRenderer::EndUpdate()
   glUnmapBuffer(GL_ARRAY_BUFFER);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   pVBO = nullptr;
+}
+
+void SpriteRenderer::Update(const Node* node)
+{
+  std::vector<const Node*> spriteList;
+  spriteList.reserve(1024);
+
+  Update(node, spriteList);
+  std::stable_sort(spriteList.begin(), spriteList.end(), [](const Node* lhs, const Node* rhs) {
+    return lhs->Position().z < rhs->Position().z;
+  });
+
+  BeginUpdate();
+  for (const auto e : spriteList) {
+    e->Draw(*this);
+  }
+  EndUpdate();
+}
+
+void SpriteRenderer::Update(const Node* node, std::vector<const Node*>& spriteList)
+{
+  spriteList.push_back(node);
+  for (auto e : node->Children()) {
+    Update(e, spriteList);
+  }
 }
 
 /**
