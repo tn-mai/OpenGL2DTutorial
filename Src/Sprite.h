@@ -25,7 +25,7 @@ class Sprite : public Node
 public:
   Sprite() = default;
   explicit Sprite(const TexturePtr&);
-  ~Sprite() = default;
+  virtual ~Sprite() = default;
   Sprite(const Sprite&) = default;
   Sprite& operator=(const Sprite&) = default;
 

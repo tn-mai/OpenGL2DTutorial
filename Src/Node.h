@@ -28,7 +28,7 @@ public:
   friend class SpriteRenderer;
 
   Node() = default;
-  ~Node() = default;
+  virtual ~Node() = default;
   Node(const Node&) = default;
   Node& operator=(const Node&) = default;
 
