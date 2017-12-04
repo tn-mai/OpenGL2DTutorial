@@ -115,6 +115,36 @@ const GamePad& Window::GetGamePad() const
 }
 
 /**
+* GLFWEWの状態を更新する.
+*/
+void Window::Update()
+{
+  UpdateGamePad();
+
+  // 経過時間計測.
+  if (prevTime <= 0) {
+    prevTime = glfwGetTime();
+  } else {
+    const double curTime = glfwGetTime();
+    deltaTime = static_cast<float>(curTime - prevTime);
+    static const float irregularThreshold = 0.5f; ///< デバッグ中などでなければありえないと考えられる経過時間.
+    if (deltaTime > irregularThreshold) {
+      deltaTime = 1.0f / 60.0f;
+    }
+    prevTime = curTime;
+  }
+}
+
+/**
+* 経過時間の計測をリセットする.
+*/
+void Window::ResetDeltaTime()
+{
+  prevTime = 0;
+  deltaTime = 0;
+}
+
+/**
 * ジョイスティックのアナログ入力装置ID.
 +
 * @note XBOX360コントローラー基準.

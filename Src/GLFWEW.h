@@ -20,7 +20,9 @@ public:
   bool ShouldClose() const;
   void SwapBuffers() const;
   const GamePad& GetGamePad() const;
-  void UpdateGamePad();
+  void Update();
+  void ResetDeltaTime();
+  float DeltaTime() const { return deltaTime; }
 
 private:
   Window() = default;
@@ -28,10 +30,15 @@ private:
   Window(const Window&) = delete;
   Window& operator=(const Window&) = delete;
 
+  void UpdateGamePad();
+
   bool isGLFWInitialized = false;
   bool isInitialized = false;
   GLFWwindow* window = nullptr;
   GamePad gamepad;
+
+  double prevTime = 0;
+  float deltaTime = 0;
 };
 
 } // namespace GLFWEW

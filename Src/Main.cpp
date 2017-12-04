@@ -16,11 +16,11 @@ using TimelineList = std::vector<FrameAnimation::TimelinePtr>;
 TimelineList InitAnimationData()
 {
   static const FrameAnimation::KeyFrame escortFrames[] = {
-    { 0.0f, glm::vec2(480, 0), glm::vec2(32, 32) },
-    { 1.0f, glm::vec2(480, 96), glm::vec2(32, 32) },
-    { 2.0f, glm::vec2(480, 64), glm::vec2(32, 32) },
-    { 3.0f, glm::vec2(480, 32), glm::vec2(32, 32) },
-    { 4.0f, glm::vec2(480, 0), glm::vec2(32, 32) },
+    { 0.000f, glm::vec2(480, 0), glm::vec2(32, 32) },
+    { 0.125f, glm::vec2(480, 96), glm::vec2(32, 32) },
+    { 0.250f, glm::vec2(480, 64), glm::vec2(32, 32) },
+    { 0.375f, glm::vec2(480, 32), glm::vec2(32, 32) },
+    { 0.500f, glm::vec2(480, 0), glm::vec2(32, 32) },
   };
   TimelineList timelineList;
   FrameAnimation::TimelinePtr timeline = std::make_shared<FrameAnimation::Timeline>();
@@ -90,7 +90,8 @@ int main()
 
   // ƒƒCƒ“ƒ‹[ƒv.
   while (!window.ShouldClose()) {
-    window.UpdateGamePad();
+    window.Update();
+    const float deltaTime = window.DeltaTime();
     const GamePad& gamepad = window.GetGamePad();
     glm::vec3 vec;
     if (gamepad.buttons & GamePad::DPAD_LEFT) {
@@ -104,16 +105,16 @@ int main()
       vec.y = -1;
     }
     if (vec.x || vec.y) {
-      vec = glm::normalize(vec);
+      vec = glm::normalize(vec) * 400.0f * deltaTime;
       sprite.Position(sprite.Position() + vec);
     }
 
-    escortNode.Rotation(escortNode.Rotation() + glm::radians(0.05f));
+    escortNode.Rotation(escortNode.Rotation() + glm::radians(25.0f * deltaTime));
     for (auto e : escortNode.Children()) {
       e->Rotation(-escortNode.Rotation());
     }
 
-    rootNode.UpdateRecursive(1.0f / 60.0f);
+    rootNode.UpdateRecursive(deltaTime);
     spriteRenderer.Update(rootNode);
 
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
