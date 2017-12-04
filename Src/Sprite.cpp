@@ -101,6 +101,18 @@ Sprite::Sprite(const TexturePtr& tex) :
 }
 
 /**
+* スプライトの状態を更新する.
+*
+* @param dt 前回の更新からの経過時間.
+*/
+void Sprite::Update(glm::f32 delta)
+{
+  if (animator) {
+    animator->Update(*this, delta);
+  }
+}
+
+/**
 * スプライトを描画する.
 *
 * @param 描画を行うレンダラー.

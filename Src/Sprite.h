@@ -5,6 +5,7 @@
 #define SPRITE_H_INCLUDED
 #include "Node.h"
 #include "Texture.h"
+#include "FrameAnimation.h"
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -35,12 +36,18 @@ public:
   void Color(const glm::vec4& c) { color = c; }
   const glm::vec4& Color() const { return color; }
 
+  void Animator(const FrameAnimation::AnimatePtr& anm) { animator = anm; }
+  const FrameAnimation::AnimatePtr& Animator() const { return animator; }
+
 private:
+  virtual void Update(glm::f32) override;
   virtual void Draw(SpriteRenderer&) const override;
 
   TexturePtr texture;
   Rect rect = { glm::vec2(0, 0), glm::vec2(1, 1) };
   glm::vec4 color = glm::vec4(1);
+
+  FrameAnimation::AnimatePtr animator;
 };
 
 /**
