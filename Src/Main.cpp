@@ -7,6 +7,29 @@
 #include "Sprite.h"
 #include <glm/gtc/matrix_transform.hpp>
 
+/// タイムラインオブジェクトの配列.
+using TimelineList = std::vector<FrameAnimation::TimelinePtr>;
+
+/**
+* アニメーションデータの初期化.
+*/
+TimelineList InitAnimationData()
+{
+  static const FrameAnimation::KeyFrame escortFrames[] = {
+    { 0.0f, glm::vec2(480, 0), glm::vec2(32, 32) },
+    { 1.0f, glm::vec2(480, 96), glm::vec2(32, 32) },
+    { 2.0f, glm::vec2(480, 64), glm::vec2(32, 32) },
+    { 3.0f, glm::vec2(480, 32), glm::vec2(32, 32) },
+    { 4.0f, glm::vec2(480, 0), glm::vec2(32, 32) },
+  };
+  TimelineList timelineList;
+  FrameAnimation::TimelinePtr timeline = std::make_shared<FrameAnimation::Timeline>();
+  timeline->data.assign(std::begin(escortFrames), std::end(escortFrames));
+  timelineList.push_back(timeline);
+
+  return timelineList;
+}
+
 /// エントリーポイント.
 int main()
 {
@@ -23,6 +46,7 @@ int main()
 
   SpriteRenderer spriteRenderer;
   spriteRenderer.Init(10000);
+  const TimelineList timelineList = InitAnimationData();
 
   Sprite sprite(tex);
   sprite.Rectangle({glm::vec2(0 ,0), glm::vec2(64, 32)});
@@ -46,16 +70,6 @@ int main()
   escortNode.Position(glm::vec3(-16, 0, 0));
   boss.AddChild(&escortNode);
 
-  static const FrameAnimation::KeyFrame cells[] = {
-    { 0.0f, glm::vec2(480, 0), glm::vec2(32, 32) },
-    { 1.0f, glm::vec2(480, 96), glm::vec2(32, 32) },
-    { 2.0f, glm::vec2(480, 64), glm::vec2(32, 32) },
-    { 3.0f, glm::vec2(480, 32), glm::vec2(32, 32) },
-    { 4.0f, glm::vec2(480, 0), glm::vec2(32, 32) },
-  };
-  FrameAnimation::TimelinePtr timeline = std::make_shared<FrameAnimation::Timeline>();
-  timeline->data.assign(std::begin(cells), std::end(cells));
-
   std::vector<Sprite> escortList(16, Sprite(tex));
   for (size_t i = 0; i < escortList.size(); ++i) {
     const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / static_cast<float>(escortList.size())), glm::vec3(0, 0, 1));
@@ -64,9 +78,7 @@ int main()
     escortList[i].Rectangle({glm::vec2(480, 0), glm::vec2(32, 32)});
     escortNode.AddChild(&escortList[i]);
 
-    auto animator = std::make_shared<FrameAnimation::Animate>(timeline);
-    animator->Loop(true);
-    animator->Speed(1.0f);
+    auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[0]);
     escortList[i].Animator(animator);
   }
 
