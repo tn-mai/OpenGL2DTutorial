@@ -30,6 +30,7 @@ public:
   Sprite(const Sprite&) = default;
   Sprite& operator=(const Sprite&) = default;
 
+  void Texture(const TexturePtr& t) { texture = t; }
   const TexturePtr& Texture() const { return texture; }
   void Rectangle(const Rect& r) { rect = r; }
   const Rect& Rectangle() const { return rect; }
@@ -61,7 +62,7 @@ public:
   SpriteRenderer(const SpriteRenderer&) = delete;
   SpriteRenderer& operator=(const SpriteRenderer&) = delete;
 
-  bool Init(size_t maxSpriteCount);
+  bool Init(size_t maxSpriteCount, const glm::vec2& winSize);
   void Update(const Node&);
   void Draw(const glm::vec2&) const;
   void ClearDrawData();
@@ -80,6 +81,8 @@ private:
   GLsizei vboCapacity = 0;        ///< VBO‚ÉŠi”[‰Â”\‚ÈÅ‘å’¸“_”.
   GLsizei vboSize = 0;            ///< VBO‚ÉŠi”[‚³‚ê‚Ä‚¢‚é’¸“_”.
   struct Vertex* pVBO = nullptr;  ///< VBO‚Ö‚Ìƒ|ƒCƒ“ƒ^.
+
+  glm::vec2 windowSize;
 
   struct DrawData {
     size_t count;

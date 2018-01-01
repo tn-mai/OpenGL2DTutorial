@@ -18,6 +18,14 @@ void ErrorCallback(int error, const char* desc)
   std::cerr << "ERROR: " << desc << std::endl;
 }
 
+void KeyCallback(GLFWwindow*, int k, int s, int a, int m)
+{
+  Window& window = Window::Instance();
+  if (window.keyCallback) {
+    window.keyCallback(k, s, a, m);
+  }
+}
+
 /**
 * シングルトンインスタンスを取得する.
 *
@@ -69,6 +77,7 @@ bool Window::Init(int w, int h, const char* title)
       return false;
     }
     glfwMakeContextCurrent(window);
+    glfwSetKeyCallback(window, ::GLFWEW::KeyCallback);
   }
 
   if (glewInit() != GLEW_OK) {
@@ -246,6 +255,16 @@ void Window::UpdateGamePad()
     }
   }
   gamepad.buttonDown = gamepad.buttons & ~prevButtons;
+}
+
+glm::vec2 Window::WindowSize() const
+{
+  if (!window) {
+    return {};
+  }
+  int w, h;
+  glfwGetWindowSize(window, &w, &h);
+  return glm::vec2(static_cast<float>(w), static_cast<float>(h));
 }
 
 } // namespace GLFWEW

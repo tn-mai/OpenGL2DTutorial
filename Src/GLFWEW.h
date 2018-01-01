@@ -6,6 +6,8 @@
 #include "GamePad.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <functional>
 
 namespace GLFWEW {
 
@@ -23,6 +25,10 @@ public:
   void Update();
   void ResetDeltaTime();
   float DeltaTime() const { return deltaTime; }
+  glm::vec2 WindowSize() const;
+
+  typedef std::function<void(int, int, int, int)> KeyCallbackType;
+  void KeyCallback(const KeyCallbackType& func) { keyCallback = func; }
 
 private:
   Window() = default;
@@ -31,11 +37,14 @@ private:
   Window& operator=(const Window&) = delete;
 
   void UpdateGamePad();
+  friend void KeyCallback(GLFWwindow*, int k, int s, int a, int m);
 
   bool isGLFWInitialized = false;
   bool isInitialized = false;
   GLFWwindow* window = nullptr;
   GamePad gamepad;
+
+  KeyCallbackType keyCallback;
 
   double prevTime = 0;
   float deltaTime = 0;

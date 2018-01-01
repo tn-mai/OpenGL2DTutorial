@@ -69,7 +69,18 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\usr\local\projects\OpenGL2DTutorial\Src\Classes;C:\usr\local\projects\OpenGL2DTutorial\Src\cocos2d;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\usr\local\projects\OpenGL2DTutorial\Src\Classes;C:\usr\local\projects\OpenGL2DTutorial\Src\cocos2d;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\usr\local\projects\OpenGL2DTutorial\Src\Classes;C:\usr\local\projects\OpenGL2DTutorial\Src\cocos2d;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\usr\local\projects\OpenGL2DTutorial\Src\Classes;C:\usr\local\projects\OpenGL2DTutorial\Src\cocos2d;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -123,6 +134,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Classes\Data\ActionController\ActionController.cpp" />
+    <ClCompile Include="Src\Classes\Data\EnemyLaunchData\EnemyLaunchData.cpp" />
+    <ClCompile Include="Src\Classes\Data\Status\Status.cpp" />
+    <ClCompile Include="Src\Classes\HelloWorldScene.cpp" />
+    <ClCompile Include="Src\Classes\Lib\InputManager\InputManager.cpp" />
+    <ClCompile Include="Src\Classes\Model\Character\Character.cpp" />
+    <ClCompile Include="Src\Classes\Model\Item\Item.cpp" />
+    <ClCompile Include="Src\Classes\Model\Map\Map.cpp" />
+    <ClCompile Include="Src\Classes\Model\UserInterface\UserInterface.cpp" />
+    <ClCompile Include="Src\Classes\Scene\GameMain\GameMain.cpp" />
+    <ClCompile Include="Src\Classes\Scene\Title\Title.cpp" />
+    <ClCompile Include="Src\cocos2d\cocos2d.cpp" />
     <ClCompile Include="Src\FrameAnimation.cpp" />
     <ClCompile Include="Src\GLFWEW.cpp" />
     <ClCompile Include="Src\Main.cpp" />
@@ -137,6 +160,21 @@
     <None Include="Res\Tutorial.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Classes\Constants.h" />
+    <ClInclude Include="Src\Classes\Data\ActionController\ActionController.h" />
+    <ClInclude Include="Src\Classes\Data\EnemyLaunchData\EnemyLaunchData.h" />
+    <ClInclude Include="Src\Classes\Data\Status\Status.h" />
+    <ClInclude Include="Src\Classes\HelloWorldScene.h" />
+    <ClInclude Include="Src\Classes\Lib\InputManager\InputManager.h" />
+    <ClInclude Include="Src\Classes\Model\Character\Character.h" />
+    <ClInclude Include="Src\Classes\Model\Item\Item.h" />
+    <ClInclude Include="Src\Classes\Model\Map\Map.h" />
+    <ClInclude Include="Src\Classes\Model\UserInterface\UserInterface.h" />
+    <ClInclude Include="Src\Classes\Scene\GameMain\GameMain.h" />
+    <ClInclude Include="Src\Classes\Scene\Title\Title.h" />
+    <ClInclude Include="Src\cocos2d\audio\include\AudioEngine.h" />
+    <ClInclude Include="Src\cocos2d\cocos2d.h" />
+    <ClInclude Include="Src\cocos2d\SimpleAudioEngine.h" />
     <ClInclude Include="Src\FrameAnimation.h" />
     <ClInclude Include="Src\DXGIFormat.h" />
     <ClInclude Include="Src\GamePad.h" />

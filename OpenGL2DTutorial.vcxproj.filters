@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{7f7979cb-4071-4924-ae9d-ab1f27558b63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cocos2d">
+      <UniqueIdentifier>{5416f1cf-afb8-4fab-94ff-73d0ec4459a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
@@ -35,6 +41,42 @@
     </ClCompile>
     <ClCompile Include="Src\FrameAnimation.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Data\ActionController\ActionController.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Model\Character\Character.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Data\EnemyLaunchData\EnemyLaunchData.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Scene\GameMain\GameMain.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\HelloWorldScene.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Lib\InputManager\InputManager.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Model\Item\Item.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Model\Map\Map.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Data\Status\Status.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Scene\Title\Title.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Classes\Model\UserInterface\UserInterface.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\cocos2d\cocos2d.cpp">
+      <Filter>cocos2d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +112,51 @@
     </ClInclude>
     <ClInclude Include="Src\FrameAnimation.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Data\ActionController\ActionController.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Model\Character\Character.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Constants.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Data\EnemyLaunchData\EnemyLaunchData.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Scene\GameMain\GameMain.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\HelloWorldScene.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Lib\InputManager\InputManager.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Model\Item\Item.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Model\Map\Map.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Data\Status\Status.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Scene\Title\Title.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Classes\Model\UserInterface\UserInterface.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\cocos2d\cocos2d.h">
+      <Filter>cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\cocos2d\SimpleAudioEngine.h">
+      <Filter>cocos2d</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\cocos2d\audio\include\AudioEngine.h">
+      <Filter>cocos2d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -119,7 +119,9 @@ void Sprite::Update(glm::f32 delta)
 */
 void Sprite::Draw(SpriteRenderer& renderer) const
 {
-  renderer.AddVertices(*this);
+  if (texture) {
+    renderer.AddVertices(*this);
+  }
 }
 
 /**
@@ -149,8 +151,9 @@ SpriteRenderer::~SpriteRenderer()
 * @retval true  èâä˙âªê¨å˜.
 * @retval false èâä˙âªé∏îs.
 */
-bool SpriteRenderer::Init(size_t maxSpriteCount)
+bool SpriteRenderer::Init(size_t maxSpriteCount, const glm::vec2& winSize)
 {
+  windowSize = winSize;
   vbo = CreateVBO(sizeof(Vertex) * maxSpriteCount * 4, nullptr);
   std::vector<GLushort> indices;
   indices.resize(maxSpriteCount * 6);
@@ -206,20 +209,21 @@ bool SpriteRenderer::AddVertices(const Sprite& sprite)
   rect.size *= reciprocalSize;
   const glm::vec2 halfSize = sprite.Rectangle().size * 0.5f;
   const glm::mat4x4& transform = sprite.Transform();
+  const glm::vec4 halfWinSize = glm::vec4(windowSize * 0.5f, 0, 0);
 
-  pVBO[0].position = transform * glm::vec4(-halfSize.x, -halfSize.y, 0, 1);
+  pVBO[0].position = transform * glm::vec4(-halfSize.x, -halfSize.y, 0, 1) - halfWinSize;
   pVBO[0].color = sprite.Color();
   pVBO[0].texCoord = rect.origin;
 
-  pVBO[1].position = transform * glm::vec4(halfSize.x, -halfSize.y, 0, 1);
+  pVBO[1].position = transform * glm::vec4(halfSize.x, -halfSize.y, 0, 1) - halfWinSize;
   pVBO[1].color = sprite.Color();
   pVBO[1].texCoord = glm::vec2(rect.origin.x + rect.size.x, rect.origin.y);
 
-  pVBO[2].position = transform * glm::vec4(halfSize.x, halfSize.y, 0, 1);
+  pVBO[2].position = transform * glm::vec4(halfSize.x, halfSize.y, 0, 1) - halfWinSize;
   pVBO[2].color = sprite.Color();
   pVBO[2].texCoord = rect.origin + rect.size;
 
-  pVBO[3].position = transform * glm::vec4(-halfSize.x, halfSize.y, 0, 1);
+  pVBO[3].position = transform * glm::vec4(-halfSize.x, halfSize.y, 0, 1) - halfWinSize;
   pVBO[3].color = sprite.Color();
   pVBO[3].texCoord = glm::vec2(rect.origin.x, rect.origin.y + rect.size.y);
 
