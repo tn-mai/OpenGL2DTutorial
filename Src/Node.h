@@ -3,6 +3,7 @@
 */
 #ifndef NODE_H_INCLUDED
 #define NODE_H_INCLUDED
+#include "TweenAnimation.h"
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
@@ -49,6 +50,9 @@ public:
 
   void UpdateRecursive(float dt);
 
+  void Tweener(const TweenAnimation::AnimatePtr& p) { tweener = p; }
+  const TweenAnimation::AnimatePtr& Tweener() const { return tweener; }
+
 private:
   virtual void Update(float dt);
   virtual void Draw(SpriteRenderer&) const;
@@ -62,6 +66,8 @@ private:
 
   Node* parent = nullptr; ///< 親ノード.
   std::vector<Node*> children; ///< 子ノードのリスト.
+
+  TweenAnimation::AnimatePtr tweener;
 };
 
 #endif // NODE_H_INCLUDED

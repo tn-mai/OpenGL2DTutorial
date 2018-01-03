@@ -43,6 +43,9 @@ void Node::UpdateRecursive(float dt)
   }
   transform = glm::rotate(glm::scale(glm::translate(parentTransform, position), glm::vec3(scale, 1.0f)), rotation, glm::vec3(0, 0, 1));
 
+  if (tweener) {
+    tweener->Update(*this, dt);
+  }
   Update(dt);
   for (auto& e : children) {
     e->UpdateRecursive(dt);

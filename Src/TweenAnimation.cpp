@@ -2,7 +2,8 @@
 * @file TweenAnimation.cpp
 */
 #include "TweenAnimation.h"
-#include "Sprite.h"
+#include "Node.h"
+#include <algorithm>
 
 namespace TweenAnimation {
 
@@ -13,7 +14,7 @@ namespace TweenAnimation {
 * @param goal  移動先の座標.
 */
 Move::Move(glm::f32 time, const glm::vec3& goal)
-  : Tweening(time)
+  : Tween(time)
   , goal(goal)
 {
 }
@@ -21,22 +22,52 @@ Move::Move(glm::f32 time, const glm::vec3& goal)
 /**
 * 移動状態を初期化する.
 *
-* @param sprite 対象となるスプライト.
+* @param sprite 対象となるノード.
 */
-void Move::Initialize(Sprite& sprite)
+void Move::Initialize(Node& node)
 {
-  start = sprite.Position();
+  start = node.Position();
 }
 
 /**
 * 移動状態を更新する.
 *
-* @param sprite  更新するスプライト.
+* @param sprite  更新するノード.
 * @param ratio   始点・終点間の比率.
 */
-void Move::Update(Sprite& sprite, glm::f32 ratio)
+void Move::Update(Node& node, glm::f32 ratio)
 {
-  sprite.Position(glm::mix(start, goal, ratio));
+  node.Position(glm::mix(start, goal, ratio));
+}
+
+/**
+* 状態を更新する.
+*
+* @param sprite  更新するノード.
+*/
+void Animate::Initialize(Node& node)
+{
+  currentTween->Initialize(node);
+}
+
+/**
+* 状態を更新する.
+*
+* @param sprite  更新するノード.
+* @param dt      前回の更新からの経過時間.
+*/
+void Animate::Update(Node& node, glm::f32 dt)
+{
+  if (!firstTween) {
+    return;
+  }
+  if (!currentTween) {
+    currentTween = firstTween;
+    currentTween->Initialize(node);
+  }
+  currentElapsed += dt * speed;
+  const glm::f32 ratio = glm::clamp(currentElapsed * reciprocalCurrentDuration, 0.0f, 1.0f);
+  currentTween->Update(node, ratio);
 }
 
 } // namespace TweenAnimation
