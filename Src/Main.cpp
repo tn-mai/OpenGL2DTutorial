@@ -82,6 +82,10 @@ int main()
     escortList[i].Animator(animator);
   }
 
+  TweenAnimation::TweenPtr moveBoss = std::make_shared<TweenAnimation::Move>(3.0f, glm::vec3(50, 200, 0));
+  TweenAnimation::AnimatePtr tweenBoss = std::make_shared<TweenAnimation::Animate>(moveBoss);
+  boss.Tweener(tweenBoss);
+
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glEnable(GL_BLEND);
