@@ -11,11 +11,11 @@ namespace TweenAnimation {
 * コンストラクタ.
 *
 * @param time  動作時間.
-* @param goal  移動先の座標.
+* @param ofs   移動先の相対座標.
 */
-Move::Move(glm::f32 time, const glm::vec3& goal)
+Move::Move(glm::f32 time, const glm::vec3& ofs)
   : Tween(time)
-  , goal(goal)
+  , offset(ofs)
 {
 }
 
@@ -37,7 +37,7 @@ void Move::Initialize(Node& node)
 */
 void Move::Update(Node& node, glm::f32 ratio)
 {
-  node.Position(glm::mix(start, goal, ratio));
+  node.Position(start + glm::mix(glm::vec3(), offset, ratio));
 }
 
 /**

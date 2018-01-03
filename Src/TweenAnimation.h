@@ -91,7 +91,7 @@ class Move : public Tween
 {
 public:
   Move() = default;
-  Move(glm::f32 time, const glm::vec3& goal);
+  Move(glm::f32 time, const glm::vec3& ofs);
   Move(const Move&) = default;
   Move& operator=(const Move&) = default;
   ~Move() = default;
@@ -101,7 +101,7 @@ public:
 
 private:
   glm::vec3 start; ///< 移動開始座標.
-  glm::vec3 goal; ///< 移動終了座標.
+  glm::vec3 offset; ///< 移動終了座標.
 };
 
 } // namespace TweenAnimation
