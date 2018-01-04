@@ -82,8 +82,12 @@ int main()
     escortList[i].Animator(animator);
   }
 
-  TweenAnimation::TweenPtr moveBoss = std::make_shared<TweenAnimation::Move>(3.0f, glm::vec3(50, 200, 0));
-  TweenAnimation::AnimatePtr tweenBoss = std::make_shared<TweenAnimation::Animate>(moveBoss);
+  auto moveBoss0 = std::make_shared<TweenAnimation::Move>(3.0f, glm::vec3(50, 200, 0));
+  auto moveBoss1 = std::make_shared<TweenAnimation::Move>(6.0f, glm::vec3(-50, -400, 0));
+  auto seqBoss = std::make_shared<TweenAnimation::Sequence>();
+  seqBoss->Add(moveBoss0);
+  seqBoss->Add(moveBoss1);
+  TweenAnimation::AnimatePtr tweenBoss = std::make_shared<TweenAnimation::Animate>(seqBoss);
   boss.Tweener(tweenBoss);
 
   glEnable(GL_DEPTH_TEST);

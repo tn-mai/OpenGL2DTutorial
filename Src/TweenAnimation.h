@@ -37,7 +37,7 @@ private:
 typedef std::shared_ptr<Tween> TweenPtr;
 
 /**
-* スプライトのトウィーンアニメーションを制御するクラス.
+* ノードのトウィーンアニメーションを制御するクラス.
 */
 class Animate
 {
@@ -51,7 +51,6 @@ public:
   void FirstTween(const TweenPtr& p) {
     firstTween = p;
     currentTween = nullptr;
-    totalDuration = p->TotalDuration();
     reciprocalCurrentDuration = 1.0f / p->Duration();
     totalElapsed = 0.0f;
     currentElapsed = 0.0f;
@@ -85,7 +84,7 @@ private:
 typedef std::shared_ptr<Animate> AnimatePtr;
 
 /**
-* スプライトの移動アニメーション.
+* ノードの移動アニメーション.
 */
 class Move : public Tween
 {
@@ -94,7 +93,7 @@ public:
   Move(glm::f32 time, const glm::vec3& ofs);
   Move(const Move&) = default;
   Move& operator=(const Move&) = default;
-  ~Move() = default;
+  virtual ~Move() = default;
 
   virtual void Initialize(Node&) override;
   virtual void Update(Node&, glm::f32) override;
@@ -102,6 +101,32 @@ public:
 private:
   glm::vec3 start; ///< 移動開始座標.
   glm::vec3 offset; ///< 移動終了座標.
+};
+
+/**
+* トウィーニングの列.
+*/
+class Sequence : public Tween
+{
+public:
+  Sequence() = default;
+  Sequence(const Sequence&) = default;
+  Sequence& operator=(const Sequence&) = default;
+  virtual ~Sequence() = default;
+
+  void Add(const TweenPtr& p) {
+    seq.push_back(p);
+    Duration(Duration() + p->Duration());
+  }
+
+  virtual void Update(Node&, glm::f32) override;
+  virtual glm::f32 TotalDuration() const override;
+
+private:
+  std::vector<TweenPtr> seq;
+  int index = -1;
+  glm::f32 currentStartTime;
+  glm::f32 currentEndTime;
 };
 
 } // namespace TweenAnimation

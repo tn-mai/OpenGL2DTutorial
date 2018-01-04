@@ -41,6 +41,56 @@ void Move::Update(Node& node, glm::f32 ratio)
 }
 
 /**
+*
+*/
+glm::f32 Sequence::TotalDuration() const
+{
+  glm::f32 duration = 0.0f;
+  for (const auto& e : seq) {
+    duration += e->Duration();
+  }
+  return duration;
+}
+
+/**
+* トウィーニング列を更新する.
+*
+* @param sprite  更新するノード.
+* @param ratio   始点・終点間の比率.
+*/
+void Sequence::Update(Node& node, glm::f32 ratio)
+{
+  if (seq.empty()) {
+    return;
+  }
+  if (index < 0) {
+    index = 0;
+    currentStartTime = 0.0f;
+    currentEndTime = seq[0]->Duration();
+    seq[0]->Initialize(node);
+  }
+  const glm::f32 elapsed = ratio * Duration();
+  const int prevIndex = index;
+  while (elapsed < currentStartTime && index > 0) {
+    --index;
+    currentEndTime = currentStartTime;
+    currentStartTime -= seq[index]->Duration();
+  }
+  while (elapsed >= currentEndTime && index < static_cast<int>(seq.size() - 1)) {
+    ++index;
+    currentStartTime = currentEndTime;
+    currentEndTime += seq[index]->Duration();
+  }
+  if (prevIndex != index) {
+    seq[index]->Initialize(node);
+  }
+  const glm::f32 curElapsed = elapsed - currentStartTime;
+  const glm::f32 curDuration = seq[index]->Duration();
+  const glm::f32 curRatio = curElapsed / curDuration;
+  seq[index]->Update(node, curRatio);
+}
+
+/**
 * 状態を更新する.
 *
 * @param sprite  更新するノード.
