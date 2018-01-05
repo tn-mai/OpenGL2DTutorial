@@ -8,6 +8,33 @@
 namespace TweenAnimation {
 
 /**
+*
+*/
+void Tween::Step(Node& node, glm::f32 ratio)
+{
+  switch (easing) {
+  default:
+  case EasingType::Linear:
+    /* 何もしない */
+    break;
+  case EasingType::EaseIn:
+    ratio *= ratio;
+    break;
+  case EasingType::EaseOut:
+    ratio *= (2.0f - ratio);
+    break;
+  case EasingType::EaseInOut:
+    if (ratio < 0.5f) {
+      ratio *= ratio * 0.5f;
+    } else {
+      ratio *= (2.0f - ratio) * 0.5f;
+    }
+    break;
+  }
+  Update(node, ratio);
+}
+
+/**
 * コンストラクタ.
 *
 * @param time  動作時間.
@@ -87,7 +114,7 @@ void Sequence::Update(Node& node, glm::f32 ratio)
     }
   }
   const glm::f32 currentRatio = (ratio - currentStartRatio) * currentReciprocalRange;
-  seq[index]->Update(node, currentRatio);
+  seq[index]->Step(node, currentRatio);
 }
 
 /**
@@ -107,7 +134,7 @@ void Animate::Update(Node& node, glm::f32 dt)
   }
   elapsed += dt;
   const glm::f32 ratio = glm::clamp(elapsed * reciprocalDuration, 0.0f, 1.0f);
-  tween->Update(node, ratio);
+  tween->Step(node, ratio);
 }
 
 } // namespace TweenAnimation

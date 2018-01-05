@@ -11,6 +11,13 @@ class Node;
 
 namespace TweenAnimation {
 
+enum class EasingType {
+  Linear,
+  EaseIn,
+  EaseOut,
+  EaseInOut,
+};
+
 /**
 * トウィーニング基本クラス.
 */
@@ -25,13 +32,17 @@ public:
 
   glm::f32 Duration() const { return duration; }
   void Duration(glm::f32 d) { duration = d; }
+  EasingType Easing() const { return easing; }
+  void Easing(EasingType type) { easing = type; }
 
   virtual void Initialize(Node&) {}
+  void Step(Node& node, glm::f32 ratio);
   virtual void Update(Node&, glm::f32 ratio) = 0;
   virtual void Finalize(Node&) {}
 
 private:
   glm::f32 duration = 1.0f; ///< 動作時間.
+  EasingType easing = EasingType::Linear;
 };
 typedef std::shared_ptr<Tween> TweenPtr;
 
