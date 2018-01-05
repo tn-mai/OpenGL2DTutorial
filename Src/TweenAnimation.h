@@ -29,7 +29,6 @@ public:
   virtual void Initialize(Node&) {}
   virtual void Update(Node&, glm::f32 ratio) = 0;
   virtual void Finalize(Node&) {}
-  virtual glm::f32 TotalDuration() const { return duration; }
 
 private:
   glm::f32 duration = 1.0f; ///< 動作時間.
@@ -44,42 +43,32 @@ class Animate
 public:
   Animate() = default;
   ~Animate() = default;
-  explicit Animate(const TweenPtr& p) { FirstTween(p); }
+  explicit Animate(const TweenPtr& p) { Tween(p); }
   Animate(const Animate&) = default;
   Animate& operator=(const Animate&) = default;
 
-  void FirstTween(const TweenPtr& p) {
-    firstTween = p;
-    currentTween = nullptr;
-    reciprocalCurrentDuration = 1.0f / p->Duration();
-    totalElapsed = 0.0f;
-    currentElapsed = 0.0f;
+  void Tween(const TweenPtr& p) {
+    tween = p;
+    reciprocalDuration = 1.0f / p->Duration();
+    elapsed = 0.0f;
   }
-  const TweenPtr& FirstTween() const { return firstTween; }
-  const TweenPtr& CurrentTween() const { return currentTween; }
+  const TweenPtr& Tween() const { return tween; }
 
-  void Speed(glm::f32 s) { speed = s; }
-  glm::f32 Speed() const { return speed; }
-  glm::f32 ElapsedTime() const { return totalElapsed; }
   void Pause() { isPause = true; }
   void Resume() { isPause = false; }
   void Loop(bool f) { isLoop = f; }
   bool IsLoop() const { return isLoop; }
 
-  void Initialize(Node&);
   void Update(Node&, glm::f32);
 
 private:
-  glm::f32 speed = 1.0f; ///< タイムラインの進行速度.
-  glm::f32 totalDuration = 0.0f; ///< 総時間.
-  glm::f32 totalElapsed = 0.0f;
-  glm::f32 reciprocalCurrentDuration = 0.0f;
-  glm::f32 currentElapsed = 0.0f; ///< 経過時間.
+  glm::f32 reciprocalDuration = 0.0f;
+  glm::f32 elapsed = 0.0f; ///< 経過時間.
+  bool isInitialized = false;
   bool isPause = false; ///< 時間経過を一時停止するかどうか.
   bool isLoop = true; ///< ループ再生を行うかどうか.
 
-  TweenPtr firstTween;
-  TweenPtr currentTween;
+  TweenPtr tween;
 };
 typedef std::shared_ptr<Animate> AnimatePtr;
 
@@ -117,16 +106,21 @@ public:
   void Add(const TweenPtr& p) {
     seq.push_back(p);
     Duration(Duration() + p->Duration());
+    reciprocalDuration = 1.0f / Duration();
   }
 
+  virtual void Initialize(Node&) override;
   virtual void Update(Node&, glm::f32) override;
-  virtual glm::f32 TotalDuration() const override;
 
 private:
+  bool NextTween(Node&);
+
   std::vector<TweenPtr> seq;
   int index = -1;
-  glm::f32 currentStartTime;
-  glm::f32 currentEndTime;
+  glm::f32 currentStartRatio;
+  glm::f32 currentEndRatio;
+  glm::f32 currentReciprocalRange;
+  glm::f32 reciprocalDuration;
 };
 
 } // namespace TweenAnimation
