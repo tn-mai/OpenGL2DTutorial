@@ -128,9 +128,9 @@ private:
 
   std::vector<TweenPtr> seq;
   int index = -1;
-  glm::f32 currentStartRatio;
-  glm::f32 currentEndRatio;
-  glm::f32 currentReciprocalRange;
+  glm::f32 currentDurationStart;
+  glm::f32 currentDurationEnd;
+  glm::f32 currentReciprocalDuration;
   glm::f32 reciprocalDuration;
 };
 

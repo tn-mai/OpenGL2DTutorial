@@ -82,9 +82,9 @@ bool Sequence::NextTween(Node& node)
     return false;
   }
   ++index;
-  currentStartRatio = currentEndRatio;
-  currentEndRatio += seq[index]->Duration() * reciprocalDuration;
-  currentReciprocalRange = 1.0f / (currentEndRatio - currentStartRatio);
+  currentDurationStart = currentDurationEnd;
+  currentDurationEnd += seq[index]->Duration();
+  currentReciprocalDuration = 1.0f / (currentDurationEnd - currentDurationStart);
   seq[index]->Initialize(node);
   return true;
 }
@@ -111,13 +111,14 @@ void Sequence::Update(Node& node, glm::f32 ratio)
   if (seq.empty()) {
     return;
   }
-  while (ratio >= currentEndRatio) {
+  const glm::f32 elapsed = ratio * Duration();
+  while (elapsed >= currentDurationEnd) {
     seq[index]->Update(node, 1.0f);
     if (!NextTween(node)) {
       break;
     }
   }
-  const glm::f32 currentRatio = (ratio - currentStartRatio) * currentReciprocalRange;
+  const glm::f32 currentRatio = glm::clamp((elapsed - currentDurationStart) * currentReciprocalDuration, 0.0f, 1.0f);
   seq[index]->Step(node, currentRatio);
 }
 
