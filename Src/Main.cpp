@@ -82,13 +82,18 @@ int main()
     escortList[i].Animator(animator);
   }
 
-  auto moveBoss0 = std::make_shared<TweenAnimation::Move>(2.0f, glm::vec3(50, 200, 0));
-  auto moveBoss1 = std::make_shared<TweenAnimation::Move>(4.0f, glm::vec3(-50, -400, 0));
+  auto moveBoss0 = std::make_shared<TweenAnimation::Move>(2.0f, glm::vec3(0, 200, 0));
+  moveBoss0->Easing(TweenAnimation::EasingType::EaseInOut);
+  auto moveBoss1 = std::make_shared<TweenAnimation::Move>(4.0f, glm::vec3(0, -400, 0));
+  moveBoss1->Easing(TweenAnimation::EasingType::EaseInOut);
+  auto moveBoss2 = std::make_shared<TweenAnimation::Move>(2.0f, glm::vec3(0, 200, 0));
+  moveBoss2->Easing(TweenAnimation::EasingType::EaseInOut);
   auto seqBoss = std::make_shared<TweenAnimation::Sequence>();
   seqBoss->Add(moveBoss0);
   seqBoss->Add(moveBoss1);
-  seqBoss->Easing(TweenAnimation::EasingType::EaseInOut);
+  seqBoss->Add(moveBoss2);
   TweenAnimation::AnimatePtr tweenBoss = std::make_shared<TweenAnimation::Animate>(seqBoss);
+  tweenBoss->Loop(true);
   boss.Tweener(tweenBoss);
 
   glEnable(GL_DEPTH_TEST);

@@ -97,6 +97,7 @@ bool Sequence::NextTween(Node& node)
 void Sequence::Initialize(Node& node)
 {
   index = -1;
+  currentDurationEnd = 0.0f;
   NextTween(node);
 }
 
@@ -138,6 +139,10 @@ void Animate::Update(Node& node, glm::f32 dt)
     tween->Initialize(node);
   }
   elapsed += dt;
+  if (elapsed >= tween->Duration() && isLoop) {
+    tween->Initialize(node);
+    elapsed -= tween->Duration();
+  }
   const glm::f32 ratio = glm::clamp(elapsed * reciprocalDuration, 0.0f, 1.0f);
   tween->Step(node, ratio);
 }
