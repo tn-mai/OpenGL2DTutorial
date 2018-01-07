@@ -44,7 +44,7 @@ void Tween::Step(Node& node, glm::f32 ratio)
 * @param time  動作時間.
 * @param ofs   移動先の相対座標.
 */
-Move::Move(glm::f32 time, const glm::vec3& ofs)
+MoveBy::MoveBy(glm::f32 time, const glm::vec3& ofs)
   : Tween(time)
   , offset(ofs)
 {
@@ -55,7 +55,7 @@ Move::Move(glm::f32 time, const glm::vec3& ofs)
 *
 * @param sprite 対象となるノード.
 */
-void Move::Initialize(Node& node)
+void MoveBy::Initialize(Node& node)
 {
   start = node.Position();
 }
@@ -66,7 +66,7 @@ void Move::Initialize(Node& node)
 * @param sprite  更新するノード.
 * @param ratio   始点・終点間の比率.
 */
-void Move::Update(Node& node, glm::f32 ratio)
+void MoveBy::Update(Node& node, glm::f32 ratio)
 {
   node.Position(start + glm::mix(glm::vec3(), offset, ratio));
 }

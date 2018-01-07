@@ -86,14 +86,14 @@ typedef std::shared_ptr<Animate> AnimatePtr;
 /**
 * ノードの移動アニメーション.
 */
-class Move : public Tween
+class MoveBy : public Tween
 {
 public:
-  Move() = default;
-  Move(glm::f32 time, const glm::vec3& ofs);
-  Move(const Move&) = default;
-  Move& operator=(const Move&) = default;
-  virtual ~Move() = default;
+  MoveBy() = default;
+  MoveBy(glm::f32 time, const glm::vec3& ofs);
+  MoveBy(const MoveBy&) = default;
+  MoveBy& operator=(const MoveBy&) = default;
+  virtual ~MoveBy() = default;
 
   virtual void Initialize(Node&) override;
   virtual void Update(Node&, glm::f32) override;
