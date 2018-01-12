@@ -49,11 +49,11 @@ int main()
   const TimelineList timelineList = InitAnimationData();
 
   Sprite sprite(tex);
-  sprite.Rectangle({glm::vec2(0 ,0), glm::vec2(64, 32)});
+  sprite.Rectangle({ glm::vec2(0 ,0), glm::vec2(64, 32) });
   sprite.Name("player");
 
   Sprite boss(tex);
-  boss.Rectangle({glm::vec2(320 ,128), glm::vec2(128, 256)});
+  boss.Rectangle({ glm::vec2(320 ,128), glm::vec2(128, 256) });
   boss.Position(glm::vec3(256, 0, 0));
   boss.Name("boss");
 
@@ -75,26 +75,45 @@ int main()
     const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / static_cast<float>(escortList.size())), glm::vec3(0, 0, 1));
     const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
     escortList[i].Position(pos);
-    escortList[i].Rectangle({glm::vec2(480, 0), glm::vec2(32, 32)});
+    escortList[i].Rectangle({ glm::vec2(480, 0), glm::vec2(32, 32) });
     escortNode.AddChild(&escortList[i]);
 
     auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[0]);
     escortList[i].Animator(animator);
   }
 
-  auto moveBoss0 = std::make_shared<TweenAnimation::MoveBy>(2.0f, glm::vec3(0, 200, 0));
-  moveBoss0->Easing(TweenAnimation::EasingType::EaseInOut);
-  auto moveBoss1 = std::make_shared<TweenAnimation::MoveBy>(4.0f, glm::vec3(0, -400, 0));
-  moveBoss1->Easing(TweenAnimation::EasingType::EaseInOut);
-  auto moveBoss2 = std::make_shared<TweenAnimation::MoveBy>(2.0f, glm::vec3(0, 200, 0));
-  moveBoss2->Easing(TweenAnimation::EasingType::EaseInOut);
-  auto seqBoss = std::make_shared<TweenAnimation::Sequence>();
-  seqBoss->Add(moveBoss0);
-  seqBoss->Add(moveBoss1);
-  seqBoss->Add(moveBoss2);
-  TweenAnimation::AnimatePtr tweenBoss = std::make_shared<TweenAnimation::Animate>(seqBoss);
-  tweenBoss->Loop(true);
-  boss.Tweener(tweenBoss);
+  {
+#if 0
+    auto moveBoss0 = std::make_shared<TweenAnimation::MoveBy>(2.0f, glm::vec3(0, -150, 0));
+    moveBoss0->Easing(TweenAnimation::EasingType::EaseInOut);
+    auto moveBoss1 = std::make_shared<TweenAnimation::MoveBy>(3.0f, glm::vec3(0, 300, 0));
+    moveBoss1->Easing(TweenAnimation::EasingType::EaseInOut);
+    auto moveBoss2 = std::make_shared<TweenAnimation::MoveBy>(3.0f, glm::vec3(0, -300, 0));
+    moveBoss2->Easing(TweenAnimation::EasingType::EaseInOut);
+    auto seqBossSub = std::make_shared<TweenAnimation::Sequence>(100);
+    seqBossSub->Add(moveBoss1);
+    seqBossSub->Add(moveBoss2);
+    auto seqBoss = std::make_shared<TweenAnimation::Sequence>();
+    seqBoss->Add(moveBoss0);
+    seqBoss->Add(seqBossSub);
+    TweenAnimation::AnimatePtr tweenBoss = std::make_shared<TweenAnimation::Animate>(seqBoss);
+#else
+    auto moveBoss0 = std::make_shared<TweenAnimation::MoveBy>(2.0f, glm::vec3(0, -150, 0));
+    moveBoss0->Easing(TweenAnimation::EasingType::EaseInOut);
+    auto moveBoss1 = std::make_shared<TweenAnimation::AccelBy>(1.5f, glm::vec3(0, 133, 0));
+    auto moveBoss2 = std::make_shared<TweenAnimation::AccelBy>(3.0f, glm::vec3(0, -133, 0));
+    auto moveBoss3 = std::make_shared<TweenAnimation::AccelBy>(3.0f, glm::vec3(0, 133, 0));
+    auto seqBossSub = std::make_shared<TweenAnimation::Sequence>(100);
+    seqBossSub->Add(moveBoss2);
+    seqBossSub->Add(moveBoss3);
+    auto seqBoss = std::make_shared<TweenAnimation::Sequence>();
+    seqBoss->Add(moveBoss0);
+    seqBoss->Add(moveBoss1);
+    seqBoss->Add(seqBossSub);
+    TweenAnimation::AnimatePtr tweenBoss = std::make_shared<TweenAnimation::Animate>(seqBoss);
+#endif
+    boss.Tweener(tweenBoss);
+  }
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);

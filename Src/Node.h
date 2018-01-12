@@ -35,8 +35,12 @@ public:
 
   void Name(const char* n) { name = n; } 
   const std::string& Name() const { return name; }
+
   void Position(const glm::vec3& p) { position = p; }
   const glm::vec3& Position() const { return position; }
+  void Velocity(const glm::vec3& p) { velocity = p; }
+  const glm::vec3& Velocity() const { return velocity; }
+
   void Scale(const glm::vec2& s) { scale = s; }
   const glm::vec2& Scale() const { return scale; }
   void Rotation(float r) { rotation = r; }
@@ -58,9 +62,12 @@ private:
   virtual void Draw(SpriteRenderer&) const;
 
   std::string name; ///< ƒm[ƒh–¼.
+
   glm::vec3 position; ///< ƒm[ƒh‚ÌÀ•W.
+  glm::vec3 velocity; ///< ‘¬“x.
+
   glm::vec2 scale = glm::vec2(1, 1); ///< ƒm[ƒh‚ÌŠg‘åk¬—¦.
-  float rotation = 0;
+  float rotation = 0; 
 
   glm::mat4x4 transform; ///< ƒm[ƒh‚ÌÀ•W•ÏŠ·s—ñ.
 

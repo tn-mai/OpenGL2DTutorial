@@ -12,6 +12,14 @@ namespace TweenAnimation {
 */
 void Tween::Step(Node& node, glm::f32 ratio)
 {
+  ratio = ratio * times;
+  const glm::u32 current = static_cast<glm::u32>(ratio);
+  for (glm::u32 i = total; i < current; ++i) {
+    Update(node, 1.0f);
+    Initialize(node);
+  }
+  ratio = std::fmod(ratio, 1.0f);
+  total = current;
   switch (easing) {
   default:
   case EasingType::Linear:
@@ -57,6 +65,7 @@ MoveBy::MoveBy(glm::f32 time, const glm::vec3& ofs)
 */
 void MoveBy::Initialize(Node& node)
 {
+  Tween::Initialize(node);
   start = node.Position();
 }
 
@@ -72,6 +81,44 @@ void MoveBy::Update(Node& node, glm::f32 ratio)
 }
 
 /**
+* コンストラクタ.
+*
+* @param time  動作時間.
+* @param ofs   加速度.
+*/
+AccelBy::AccelBy(glm::f32 time, const glm::vec3& ofs)
+  : Tween(time)
+  , offset(ofs)
+{
+}
+
+/**
+* 移動状態を初期化する.
+*
+* @param sprite 対象となるノード.
+*/
+void AccelBy::Initialize(Node& node)
+{
+  Tween::Initialize(node);
+  v0 = node.Velocity();
+  p0 = node.Position();
+}
+
+/**
+* 加速を更新する.
+*
+* @param sprite  更新するノード.
+* @param ratio   始点・終点間の比率.
+*/
+void AccelBy::Update(Node& node, glm::f32 ratio)
+{
+  const float t = TotalDuration() * ratio;
+  const glm::vec3 at = offset * t;
+  node.Velocity(v0 + at);
+  node.Position(p0 + v0 * t + 0.5f * at * t);
+}
+
+/**
 * 次のトウィーニングオブジェクトを設定する.
 *
 * @param sprite  操作対象ノード.
@@ -83,7 +130,7 @@ bool Sequence::NextTween(Node& node)
   }
   ++index;
   currentDurationStart = currentDurationEnd;
-  currentDurationEnd += seq[index]->Duration();
+  currentDurationEnd += seq[index]->TotalDuration();
   currentReciprocalDuration = 1.0f / (currentDurationEnd - currentDurationStart);
   seq[index]->Initialize(node);
   return true;
@@ -96,6 +143,7 @@ bool Sequence::NextTween(Node& node)
 */
 void Sequence::Initialize(Node& node)
 {
+  Tween::Initialize(node);
   index = -1;
   currentDurationEnd = 0.0f;
   NextTween(node);
@@ -112,7 +160,7 @@ void Sequence::Update(Node& node, glm::f32 ratio)
   if (seq.empty()) {
     return;
   }
-  const glm::f32 elapsed = ratio * Duration();
+  const glm::f32 elapsed = ratio * UnitDuration();
   while (elapsed >= currentDurationEnd) {
     seq[index]->Update(node, 1.0f);
     if (!NextTween(node)) {
@@ -139,9 +187,9 @@ void Animate::Update(Node& node, glm::f32 dt)
     tween->Initialize(node);
   }
   elapsed += dt;
-  if (elapsed >= tween->Duration() && isLoop) {
+  if (elapsed >= tween->TotalDuration() && isLoop) {
     tween->Initialize(node);
-    elapsed -= tween->Duration();
+    elapsed -= tween->TotalDuration();
   }
   const glm::f32 ratio = glm::clamp(elapsed * reciprocalDuration, 0.0f, 1.0f);
   tween->Step(node, ratio);
