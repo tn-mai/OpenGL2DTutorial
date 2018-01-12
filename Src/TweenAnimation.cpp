@@ -4,22 +4,22 @@
 #include "TweenAnimation.h"
 #include "Node.h"
 #include <algorithm>
+#include <iostream>
 
 namespace TweenAnimation {
 
 /**
 *
 */
-void Tween::Step(Node& node, glm::f32 ratio)
+void Tween::Step(Node& node, glm::f32 elapsed)
 {
-  ratio = ratio * times;
-  const glm::u32 current = static_cast<glm::u32>(ratio);
+  const glm::u32 current = static_cast<glm::u32>(elapsed / UnitDuration());
   for (glm::u32 i = total; i < current; ++i) {
-    Update(node, 1.0f);
+    Update(node, UnitDuration());
     Initialize(node);
   }
-  ratio = std::fmod(ratio, 1.0f);
   total = current;
+  glm::f32 ratio = std::fmod(elapsed, UnitDuration()) / UnitDuration();
   switch (easing) {
   default:
   case EasingType::Linear:
@@ -43,7 +43,7 @@ void Tween::Step(Node& node, glm::f32 ratio)
     ratio *= 0.5f;
     break;
   }
-  Update(node, ratio);
+  Update(node, UnitDuration() * ratio);
 }
 
 /**
@@ -75,9 +75,82 @@ void MoveBy::Initialize(Node& node)
 * @param sprite  更新するノード.
 * @param ratio   始点・終点間の比率.
 */
-void MoveBy::Update(Node& node, glm::f32 ratio)
+void MoveBy::Update(Node& node, glm::f32 elapsed)
 {
+  const glm::f32 ratio = elapsed / TotalDuration();
   node.Position(start + glm::mix(glm::vec3(), offset, ratio));
+}
+
+/**
+* コンストラクタ.
+*
+* @param time  動作時間.
+* @param ofs   移動先の相対座標.
+*/
+MoveXBy::MoveXBy(glm::f32 time, glm::f32 ofs)
+  : Tween(time)
+  , offset(ofs)
+{
+}
+
+/**
+* 移動状態を初期化する.
+*
+* @param sprite 対象となるノード.
+*/
+void MoveXBy::Initialize(Node& node)
+{
+  Tween::Initialize(node);
+  start = node.Position().x;
+}
+
+/**
+* 移動状態を更新する.
+*
+* @param sprite  更新するノード.
+* @param ratio   始点・終点間の比率.
+*/
+void MoveXBy::Update(Node& node, glm::f32 ratio)
+{
+  glm::vec3 pos = node.Position();
+  pos.x = start + glm::mix(0.0f, offset, ratio);
+  node.Position(pos);
+}
+
+/**
+* コンストラクタ.
+*
+* @param time  動作時間.
+* @param ofs   移動先の相対座標.
+*/
+MoveYBy::MoveYBy(glm::f32 time, glm::f32 ofs)
+  : Tween(time)
+  , offset(ofs)
+{
+}
+
+/**
+* 移動状態を初期化する.
+*
+* @param sprite 対象となるノード.
+*/
+void MoveYBy::Initialize(Node& node)
+{
+  Tween::Initialize(node);
+  start = node.Position().y;
+}
+
+/**
+* 移動状態を更新する.
+*
+* @param sprite  更新するノード.
+* @param ratio   始点・終点間の比率.
+*/
+void MoveYBy::Update(Node& node, glm::f32 ratio)
+{
+  glm::vec3 pos = node.Position();
+  pos.y = start + glm::mix(0.0f, offset, ratio);
+  node.Position(pos);
 }
 
 /**
@@ -133,6 +206,8 @@ bool Sequence::NextTween(Node& node)
   currentDurationEnd += seq[index]->TotalDuration();
   currentReciprocalDuration = 1.0f / (currentDurationEnd - currentDurationStart);
   seq[index]->Initialize(node);
+
+  std::cout << "Animation sequence: " << index << "/" << seq.size() << std::endl;
   return true;
 }
 
@@ -155,21 +230,20 @@ void Sequence::Initialize(Node& node)
 * @param sprite  操作対象ノード.
 * @param ratio   始点・終点間の比率.
 */
-void Sequence::Update(Node& node, glm::f32 ratio)
+void Sequence::Update(Node& node, glm::f32 elapsed)
 {
   if (seq.empty()) {
     return;
   }
-  const glm::f32 elapsed = ratio * UnitDuration();
   while (elapsed >= currentDurationEnd) {
-    seq[index]->Update(node, 1.0f);
+    seq[index]->Update(node, seq[index]->TotalDuration());
     if (!NextTween(node)) {
       break;
     }
   }
-  const glm::f32 currentRatio = glm::clamp((elapsed - currentDurationStart) * currentReciprocalDuration, 0.0f, 1.0f);
-  seq[index]->Step(node, currentRatio);
-}
+  const glm::f32 currentRatio = glm::clamp(elapsed, currentDurationStart, currentDurationEnd);
+  seq[index]->Step(node, currentRatio - currentDurationStart);
+ }
 
 /**
 * 状態を更新する.
@@ -191,8 +265,27 @@ void Animate::Update(Node& node, glm::f32 dt)
     tween->Initialize(node);
     elapsed -= tween->TotalDuration();
   }
-  const glm::f32 ratio = glm::clamp(elapsed * reciprocalDuration, 0.0f, 1.0f);
-  tween->Step(node, ratio);
+  tween->Step(node, elapsed);
+}
+
+/**
+* 移動状態を初期化する.
+*
+* @param sprite 対象となるノード.
+*/
+void Parallelize::Initialize(Node& node)
+{
+  Tween::Initialize(node);
+}
+
+/**
+* 移動状態を更新する.
+*
+* @param sprite  更新するノード.
+* @param ratio   始点・終点間の比率.
+*/
+void Parallelize::Update(Node& node, glm::f32 ratio)
+{
 }
 
 } // namespace TweenAnimation

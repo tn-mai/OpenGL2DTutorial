@@ -106,6 +106,46 @@ private:
   glm::vec3 offset; ///< 移動終了座標.
 };
 
+/**
+* ノードの移動アニメーション.
+*/
+class MoveXBy : public Tween
+{
+public:
+  MoveXBy() = default;
+  MoveXBy(glm::f32 d, glm::f32 ofs);
+  MoveXBy(const MoveXBy&) = default;
+  MoveXBy& operator=(const MoveXBy&) = default;
+  virtual ~MoveXBy() = default;
+
+  virtual void Initialize(Node&) override;
+  virtual void Update(Node&, glm::f32) override;
+
+private:
+  glm::f32 start; ///< 移動開始座標.
+  glm::f32 offset; ///< 移動終了座標.
+};
+
+/**
+* ノードの移動アニメーション.
+*/
+class MoveYBy : public Tween
+{
+public:
+  MoveYBy() = default;
+  MoveYBy(glm::f32 d, glm::f32 ofs);
+  MoveYBy(const MoveYBy&) = default;
+  MoveYBy& operator=(const MoveYBy&) = default;
+  virtual ~MoveYBy() = default;
+
+  virtual void Initialize(Node&) override;
+  virtual void Update(Node&, glm::f32) override;
+
+private:
+  glm::f32 start; ///< 移動開始座標.
+  glm::f32 offset; ///< 移動終了座標.
+};
+
 class AccelBy : public Tween
 {
 public:
@@ -153,6 +193,32 @@ private:
   glm::f32 currentDurationEnd;
   glm::f32 currentReciprocalDuration;
   glm::f32 reciprocalDuration;
+};
+
+/**
+* ノードの移動アニメーション.
+*/
+class Parallelize : public Tween
+{
+public:
+  Parallelize() = default;
+  Parallelize(const Parallelize&) = default;
+  Parallelize& operator=(const Parallelize&) = default;
+  virtual ~Parallelize() = default;
+
+  void Add(const TweenPtr& p) {
+    tweens.push_back(p);
+    const glm::f32 d = p->TotalDuration();
+    if (d > UnitDuration()) {
+      UnitDuration(d);
+    }
+  }
+
+  virtual void Initialize(Node&) override;
+  virtual void Update(Node&, glm::f32) override;
+
+private:
+  std::vector<TweenPtr> tweens;
 };
 
 } // namespace TweenAnimation
