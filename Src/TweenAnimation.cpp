@@ -171,7 +171,6 @@ bool Sequence::NextTween(Node& node)
   ++index;
   currentDurationStart = currentDurationEnd;
   currentDurationEnd += seq[index]->TotalDuration();
-  currentReciprocalDuration = 1.0f / (currentDurationEnd - currentDurationStart);
   seq[index]->Initialize(node);
   return true;
 }

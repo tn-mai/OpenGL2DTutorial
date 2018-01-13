@@ -63,7 +63,6 @@ public:
 
   void Tween(const TweenPtr& p) {
     tween = p;
-    reciprocalDuration = 1.0f / p->TotalDuration();
     elapsed = 0.0f;
   }
   const TweenPtr& Tween() const { return tween; }
@@ -76,7 +75,6 @@ public:
   void Update(Node&, glm::f32);
 
 private:
-  glm::f32 reciprocalDuration = 0.0f;
   glm::f32 elapsed = 0.0f; ///< Œo‰ßŽžŠÔ.
   bool isInitialized = false;
   bool isPause = false; ///< ŽžŠÔŒo‰ß‚ðˆêŽž’âŽ~‚·‚é‚©‚Ç‚¤‚©.
@@ -160,7 +158,6 @@ public:
   void Add(const TweenPtr& p) {
     seq.push_back(p);
     UnitDuration(UnitDuration() + p->TotalDuration());
-    reciprocalDuration = 1.0f / TotalDuration();
   }
 
   virtual void Initialize(Node&) override;
@@ -173,8 +170,6 @@ private:
   int index = -1;
   glm::f32 currentDurationStart;
   glm::f32 currentDurationEnd;
-  glm::f32 currentReciprocalDuration;
-  glm::f32 reciprocalDuration;
 };
 
 /**
