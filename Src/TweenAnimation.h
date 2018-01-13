@@ -112,7 +112,7 @@ class MoveBy : public Tween
 {
 public:
   MoveBy() = default;
-  MoveBy(glm::f32 d, const glm::vec3& ofs, Target t = Target::XYZ);
+  MoveBy(glm::f32 d, const glm::vec3& ofs, EasingType e = EasingType::Linear, Target t = Target::XYZ);
   MoveBy(const MoveBy&) = default;
   MoveBy& operator=(const MoveBy&) = default;
   virtual ~MoveBy() = default;

@@ -70,8 +70,8 @@ void Tween::Step(Node& node, glm::f32 elapsed)
 * @param time  “®ìŠÔ.
 * @param ofs   ˆÚ“®æ‚Ì‘Š‘ÎÀ•W.
 */
-MoveBy::MoveBy(glm::f32 time, const glm::vec3& ofs, Target t)
-  : Tween(time)
+MoveBy::MoveBy(glm::f32 time, const glm::vec3& ofs, EasingType e, Target t)
+  : Tween(time, e)
   , offset(ofs)
   , target(t)
 {
