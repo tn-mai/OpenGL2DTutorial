@@ -236,13 +236,12 @@ void Sequence::Update(Node& node, glm::f32 elapsed)
     return;
   }
   while (elapsed >= currentDurationEnd) {
-    seq[index]->Update(node, seq[index]->TotalDuration());
+    seq[index]->Step(node, seq[index]->TotalDuration());
     if (!NextTween(node)) {
-      break;
+      return;
     }
   }
-  const glm::f32 currentRatio = glm::clamp(elapsed, currentDurationStart, currentDurationEnd);
-  seq[index]->Step(node, currentRatio - currentDurationStart);
+  seq[index]->Step(node, elapsed - currentDurationStart);
  }
 
 /**
