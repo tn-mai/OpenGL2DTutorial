@@ -11,21 +11,27 @@ class Node;
 
 namespace TweenAnimation {
 
+/**
+* イージングの種類.
+*/
 enum class EasingType {
-  Linear,
-  EaseIn,
-  EaseOut,
-  EaseInOut,
+  Linear, ///< 等速.
+  EaseIn, ///< 加速.
+  EaseOut, ///< 減速.
+  EaseInOut, ///< 加速+減速.
 };
 
+/**
+* アニメーションを適用する要素.
+*/
 enum class Target {
-  X = 1,
-  Y = 2,
-  XY = 3,
-  Z = 4,
-  XZ = 5,
-  YZ = 6,
-  XYZ = 7
+  X = 1, ///< X要素のみ.
+  Y = 2, ///< Y要素のみ.
+  XY = 3, ///< X要素とY要素.
+  Z = 4, ///< Z要素のみ.
+  XZ = 5, ///< X要素とZ要素.
+  YZ = 6, ///< Y要素とZ要素.
+  XYZ = 7 ///< 全ての要素.
 };
 
 /**
