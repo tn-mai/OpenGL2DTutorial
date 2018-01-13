@@ -132,7 +132,7 @@ private:
 class Sequence : public Tween
 {
 public:
-  Sequence(glm::u32 t = 1) : Tween(0.0f, EasingType::Linear, t) {}
+  explicit Sequence(glm::u32 t = 1) : Tween(0.0f, EasingType::Linear, t) {}
   Sequence(const Sequence&) = default;
   Sequence& operator=(const Sequence&) = default;
   virtual ~Sequence() = default;
@@ -160,7 +160,7 @@ private:
 class Parallelize : public Tween
 {
 public:
-  Parallelize() = default;
+  explicit Parallelize(glm::u32 t = 1) : Tween(0.0f, EasingType::Linear, t) {}
   Parallelize(const Parallelize&) = default;
   Parallelize& operator=(const Parallelize&) = default;
   virtual ~Parallelize() = default;
