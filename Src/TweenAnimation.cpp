@@ -277,6 +277,9 @@ void Animate::Update(Node& node, glm::f32 dt)
 void Parallelize::Initialize(Node& node)
 {
   Tween::Initialize(node);
+  for (auto& e : tweens) {
+    e->Initialize(node);
+  }
 }
 
 /**
@@ -285,8 +288,14 @@ void Parallelize::Initialize(Node& node)
 * @param sprite  更新するノード.
 * @param ratio   始点・終点間の比率.
 */
-void Parallelize::Update(Node& node, glm::f32 ratio)
+void Parallelize::Update(Node& node, glm::f32 elapsed)
 {
+  if (tweens.empty()) {
+    return;
+  }
+  for (auto& e : tweens) {
+    e->Step(node, elapsed);
+  }
 }
 
 } // namespace TweenAnimation
