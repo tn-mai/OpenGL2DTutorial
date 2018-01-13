@@ -110,8 +110,9 @@ void MoveXBy::Initialize(Node& node)
 * @param sprite  更新するノード.
 * @param ratio   始点・終点間の比率.
 */
-void MoveXBy::Update(Node& node, glm::f32 ratio)
+void MoveXBy::Update(Node& node, glm::f32 elapsed)
 {
+  const glm::f32 ratio = elapsed / TotalDuration();
   glm::vec3 pos = node.Position();
   pos.x = start + glm::mix(0.0f, offset, ratio);
   node.Position(pos);
@@ -146,8 +147,9 @@ void MoveYBy::Initialize(Node& node)
 * @param sprite  更新するノード.
 * @param ratio   始点・終点間の比率.
 */
-void MoveYBy::Update(Node& node, glm::f32 ratio)
+void MoveYBy::Update(Node& node, glm::f32 elapsed)
 {
+  const glm::f32 ratio = elapsed / TotalDuration();
   glm::vec3 pos = node.Position();
   pos.y = start + glm::mix(0.0f, offset, ratio);
   node.Position(pos);
