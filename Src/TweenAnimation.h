@@ -18,6 +18,16 @@ enum class EasingType {
   EaseInOut,
 };
 
+enum class Target {
+  X = 1,
+  Y = 2,
+  XY = 3,
+  Z = 4,
+  XZ = 5,
+  YZ = 6,
+  XYZ = 7
+};
+
 /**
 * トウィーニング基本クラス.
 */
@@ -96,7 +106,7 @@ class MoveBy : public Tween
 {
 public:
   MoveBy() = default;
-  MoveBy(glm::f32 d, const glm::vec3& ofs);
+  MoveBy(glm::f32 d, const glm::vec3& ofs, Target t = Target::XYZ);
   MoveBy(const MoveBy&) = default;
   MoveBy& operator=(const MoveBy&) = default;
   virtual ~MoveBy() = default;
@@ -107,46 +117,7 @@ public:
 private:
   glm::vec3 start; ///< 移動開始座標.
   glm::vec3 offset; ///< 移動終了座標.
-};
-
-/**
-* ノードの移動アニメーション.
-*/
-class MoveXBy : public Tween
-{
-public:
-  MoveXBy() = default;
-  MoveXBy(glm::f32 d, glm::f32 ofs);
-  MoveXBy(const MoveXBy&) = default;
-  MoveXBy& operator=(const MoveXBy&) = default;
-  virtual ~MoveXBy() = default;
-
-  virtual void Initialize(Node&) override;
-  virtual void Update(Node&, glm::f32) override;
-
-private:
-  glm::f32 start; ///< 移動開始座標.
-  glm::f32 offset; ///< 移動終了座標.
-};
-
-/**
-* ノードの移動アニメーション.
-*/
-class MoveYBy : public Tween
-{
-public:
-  MoveYBy() = default;
-  MoveYBy(glm::f32 d, glm::f32 ofs);
-  MoveYBy(const MoveYBy&) = default;
-  MoveYBy& operator=(const MoveYBy&) = default;
-  virtual ~MoveYBy() = default;
-
-  virtual void Initialize(Node&) override;
-  virtual void Update(Node&, glm::f32) override;
-
-private:
-  glm::f32 start; ///< 移動開始座標.
-  glm::f32 offset; ///< 移動終了座標.
+  Target target = Target::XYZ; ///< 操作対象.
 };
 
 /**

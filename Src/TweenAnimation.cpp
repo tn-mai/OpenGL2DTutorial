@@ -55,9 +55,10 @@ void Tween::Step(Node& node, glm::f32 elapsed)
 * @param time  動作時間.
 * @param ofs   移動先の相対座標.
 */
-MoveBy::MoveBy(glm::f32 time, const glm::vec3& ofs)
+MoveBy::MoveBy(glm::f32 time, const glm::vec3& ofs, Target t)
   : Tween(time)
   , offset(ofs)
+  , target(t)
 {
 }
 
@@ -81,80 +82,17 @@ void MoveBy::Initialize(Node& node)
 void MoveBy::Update(Node& node, glm::f32 elapsed)
 {
   const glm::f32 ratio = elapsed * ReciprocalUnitDuration();
-  node.Position(start + glm::mix(glm::vec3(), offset, ratio));
-}
-
-/**
-* コンストラクタ.
-*
-* @param time  動作時間.
-* @param ofs   移動先の相対座標.
-*/
-MoveXBy::MoveXBy(glm::f32 time, glm::f32 ofs)
-  : Tween(time)
-  , offset(ofs)
-{
-}
-
-/**
-* 移動状態を初期化する.
-*
-* @param node 制御対象のノード.
-*/
-void MoveXBy::Initialize(Node& node)
-{
-  Tween::Initialize(node);
-  start = node.Position().x;
-}
-
-/**
-* 移動状態を更新する.
-*
-* @param node    更新対象のノード.
-* @param elapsed 経過時間.
-*/
-void MoveXBy::Update(Node& node, glm::f32 elapsed)
-{
-  const glm::f32 ratio = elapsed * ReciprocalUnitDuration();
+  const glm::vec3 cur = start + glm::mix(glm::vec3(), offset, ratio);
   glm::vec3 pos = node.Position();
-  pos.x = start + glm::mix(0.0f, offset, ratio);
-  node.Position(pos);
-}
-
-/**
-* コンストラクタ.
-*
-* @param time  動作時間.
-* @param ofs   移動先の相対座標.
-*/
-MoveYBy::MoveYBy(glm::f32 time, glm::f32 ofs)
-  : Tween(time)
-  , offset(ofs)
-{
-}
-
-/**
-* 移動状態を初期化する.
-*
-* @param node 制御対象のノード.
-*/
-void MoveYBy::Initialize(Node& node)
-{
-  Tween::Initialize(node);
-  start = node.Position().y;
-}
-
-/**
-* 移動状態を更新する.
-*
-* @param node    更新対象のノード.
-* @param elapsed 経過時間.
-*/
-void MoveYBy::Update(Node& node, glm::f32 elapsed)
-{
-  const glm::f32 ratio = elapsed * ReciprocalUnitDuration();
-  glm::vec3 pos = node.Position();
-  pos.y = start + glm::mix(0.0f, offset, ratio);
+  if (static_cast<int>(target) & static_cast<int>(Target::X)) {
+    pos.x = cur.x;
+  }
+  if (static_cast<int>(target) & static_cast<int>(Target::Y)) {
+    pos.y = cur.y;
+  }
+  if (static_cast<int>(target) & static_cast<int>(Target::Z)) {
+    pos.z = cur.z;
+  }
   node.Position(pos);
 }
 

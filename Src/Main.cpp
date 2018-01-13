@@ -98,18 +98,18 @@ int main()
     seqBoss->Add(seqBossSub);
     TweenAnimation::AnimatePtr tweenBoss = std::make_shared<TweenAnimation::Animate>(seqBoss);
 #else
-    auto moveBossY0 = std::make_shared<TweenAnimation::MoveYBy>(1.5f, 150.0f);
+    auto moveBossY0 = std::make_shared<TweenAnimation::MoveBy>(1.5f, glm::vec3(0, 150, 0), TweenAnimation::Target::Y);
     moveBossY0->Easing(TweenAnimation::EasingType::EaseOut);
-    auto moveBossY1 = std::make_shared<TweenAnimation::MoveYBy>(3.0f, -300.0f);
+    auto moveBossY1 = std::make_shared<TweenAnimation::MoveBy>(3.0f, glm::vec3(0, -300, 0), TweenAnimation::Target::Y);
     moveBossY1->Easing(TweenAnimation::EasingType::EaseInOut);
-    auto moveBossY2 = std::make_shared<TweenAnimation::MoveYBy>(1.5f, 150.0f);
+    auto moveBossY2 = std::make_shared<TweenAnimation::MoveBy>(1.5f, glm::vec3(0, 150, 0), TweenAnimation::Target::Y);
     moveBossY2->Easing(TweenAnimation::EasingType::EaseIn);
 
-    auto moveBossX0 = std::make_shared<TweenAnimation::MoveXBy>(0.75f, -50.0f);
+    auto moveBossX0 = std::make_shared<TweenAnimation::MoveBy>(0.75f, glm::vec3(-50, 0, 0), TweenAnimation::Target::X);
     moveBossX0->Easing(TweenAnimation::EasingType::EaseOut);
-    auto moveBossX1 = std::make_shared<TweenAnimation::MoveXBy>(1.5f, 100.0f);
+    auto moveBossX1 = std::make_shared<TweenAnimation::MoveBy>(1.5f, glm::vec3(100, 0, 0), TweenAnimation::Target::X);
     moveBossX1->Easing(TweenAnimation::EasingType::EaseInOut);
-    auto moveBossX2 = std::make_shared<TweenAnimation::MoveXBy>(0.75f, -50.0f);
+    auto moveBossX2 = std::make_shared<TweenAnimation::MoveBy>(0.75f, glm::vec3(-50, 0, 0), TweenAnimation::Target::X);
     moveBossX2->Easing(TweenAnimation::EasingType::EaseIn);
 
     auto seqBossY = std::make_shared<TweenAnimation::Sequence>(50);
