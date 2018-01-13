@@ -9,6 +9,21 @@
 namespace TweenAnimation {
 
 /**
+* コンストラクタ.
+*
+* @param d  動作時間.
+* @param e  補間方法.
+* @param t  ループ回数.
+*/
+Tween::Tween(glm::f32 d, EasingType e, glm::u32 t) :
+  duration(d),
+  reciprocalDuration(1.0f / d),
+  times(static_cast<float>(t)),
+  easing(e)
+{
+}
+
+/**
 * 状態を更新する.
 *
 * @param node    更新対象のノード.

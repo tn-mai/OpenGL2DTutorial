@@ -41,7 +41,7 @@ class Tween
 {
 public:
   Tween() = default;
-  explicit Tween(glm::f32 d, glm::u32 t = 1) : duration(d), reciprocalDuration(1.0f / d), times(static_cast<float>(t)) {}
+  explicit Tween(glm::f32 d, EasingType e = EasingType::Linear, glm::u32 t = 1);
   Tween(const Tween&) = default;
   Tween& operator=(const Tween&) = default;
   virtual ~Tween() = default;
@@ -132,7 +132,7 @@ private:
 class Sequence : public Tween
 {
 public:
-  Sequence(glm::u32 t = 1) : Tween(0.0f, t) {}
+  Sequence(glm::u32 t = 1) : Tween(0.0f, EasingType::Linear, t) {}
   Sequence(const Sequence&) = default;
   Sequence& operator=(const Sequence&) = default;
   virtual ~Sequence() = default;
