@@ -65,6 +65,29 @@ void Tween::Step(Node& node, glm::f32 elapsed)
 }
 
 /**
+* 状態を更新する.
+*
+* @param node  更新対象のノード.
+* @param dt    前回の更新からの経過時間.
+*/
+void Animate::Update(Node& node, glm::f32 dt)
+{
+  if (!tween) {
+    return;
+  }
+  if (!isInitialized) {
+    isInitialized = true;
+    tween->Initialize(node);
+  }
+  elapsed += dt;
+  if (elapsed >= tween->TotalDuration() && isLoop) {
+    tween->Initialize(node);
+    elapsed -= tween->TotalDuration();
+  }
+  tween->Step(node, elapsed);
+}
+
+/**
 * コンストラクタ.
 *
 * @param d  動作時間.
@@ -160,29 +183,6 @@ void Sequence::Update(Node& node, glm::f32 elapsed)
   }
   seq[index]->Step(node, elapsed - currentDurationStart);
  }
-
-/**
-* 状態を更新する.
-*
-* @param node  更新対象のノード.
-* @param dt    前回の更新からの経過時間.
-*/
-void Animate::Update(Node& node, glm::f32 dt)
-{
-  if (!tween) {
-    return;
-  }
-  if (!isInitialized) {
-    isInitialized = true;
-    tween->Initialize(node);
-  }
-  elapsed += dt;
-  if (elapsed >= tween->TotalDuration() && isLoop) {
-    tween->Initialize(node);
-    elapsed -= tween->TotalDuration();
-  }
-  tween->Step(node, elapsed);
-}
 
 /**
 * 移動状態を初期化する.
