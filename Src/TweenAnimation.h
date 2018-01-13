@@ -25,14 +25,18 @@ class Tween
 {
 public:
   Tween() = default;
-  explicit Tween(glm::f32 d, glm::u32 t = 1) : duration(d), times(static_cast<float>(t)) {}
+  explicit Tween(glm::f32 d, glm::u32 t = 1) : duration(d), reciprocalDuration(1.0f / d), times(static_cast<float>(t)) {}
   Tween(const Tween&) = default;
   Tween& operator=(const Tween&) = default;
   virtual ~Tween() = default;
 
   glm::f32 TotalDuration() const { return duration * times; }
   glm::f32 UnitDuration() const { return duration; }
-  void UnitDuration(glm::f32 d) { duration = d; }
+  glm::f32 ReciprocalUnitDuration() const { return reciprocalDuration; }
+  void UnitDuration(glm::f32 d) {
+    duration = d;
+    reciprocalDuration = 1.0f / d;
+  }
   EasingType Easing() const { return easing; }
   void Easing(EasingType type) { easing = type; }
 
@@ -43,6 +47,7 @@ public:
 
 private:
   glm::f32 duration = 1.0f; ///< “®ìŽžŠÔ.
+  glm::f32 reciprocalDuration = 1.0f; ///< “®ìŽžŠÔ‚Ì‹t”.
   glm::f32 times = 1.0f;
   EasingType easing = EasingType::Linear;
   glm::u32 total = 0;

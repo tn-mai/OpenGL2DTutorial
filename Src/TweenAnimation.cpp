@@ -16,13 +16,13 @@ namespace TweenAnimation {
 */
 void Tween::Step(Node& node, glm::f32 elapsed)
 {
-  const glm::u32 current = static_cast<glm::u32>(elapsed / UnitDuration());
+  const glm::u32 current = static_cast<glm::u32>(elapsed * ReciprocalUnitDuration());
   for (glm::u32 i = total; i < current; ++i) {
     Update(node, UnitDuration());
     Initialize(node);
   }
   total = current;
-  glm::f32 ratio = std::fmod(elapsed, UnitDuration()) / UnitDuration();
+  glm::f32 ratio = std::fmod(elapsed, UnitDuration()) * ReciprocalUnitDuration();
   switch (easing) {
   default:
   case EasingType::Linear:
@@ -80,7 +80,7 @@ void MoveBy::Initialize(Node& node)
 */
 void MoveBy::Update(Node& node, glm::f32 elapsed)
 {
-  const glm::f32 ratio = elapsed / TotalDuration();
+  const glm::f32 ratio = elapsed * ReciprocalUnitDuration();
   node.Position(start + glm::mix(glm::vec3(), offset, ratio));
 }
 
@@ -115,7 +115,7 @@ void MoveXBy::Initialize(Node& node)
 */
 void MoveXBy::Update(Node& node, glm::f32 elapsed)
 {
-  const glm::f32 ratio = elapsed / TotalDuration();
+  const glm::f32 ratio = elapsed * ReciprocalUnitDuration();
   glm::vec3 pos = node.Position();
   pos.x = start + glm::mix(0.0f, offset, ratio);
   node.Position(pos);
@@ -152,7 +152,7 @@ void MoveYBy::Initialize(Node& node)
 */
 void MoveYBy::Update(Node& node, glm::f32 elapsed)
 {
-  const glm::f32 ratio = elapsed / TotalDuration();
+  const glm::f32 ratio = elapsed * ReciprocalUnitDuration();
   glm::vec3 pos = node.Position();
   pos.y = start + glm::mix(0.0f, offset, ratio);
   node.Position(pos);
