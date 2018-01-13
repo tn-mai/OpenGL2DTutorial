@@ -173,8 +173,6 @@ bool Sequence::NextTween(Node& node)
   currentDurationEnd += seq[index]->TotalDuration();
   currentReciprocalDuration = 1.0f / (currentDurationEnd - currentDurationStart);
   seq[index]->Initialize(node);
-
-  std::cout << "Animation sequence: " << index << "/" << seq.size() << std::endl;
   return true;
 }
 
