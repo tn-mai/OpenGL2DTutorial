@@ -9,7 +9,10 @@
 namespace TweenAnimation {
 
 /**
+* 状態を更新する.
 *
+* @param node    更新対象のノード.
+* @param elapsed 経過時間.
 */
 void Tween::Step(Node& node, glm::f32 elapsed)
 {
@@ -61,7 +64,7 @@ MoveBy::MoveBy(glm::f32 time, const glm::vec3& ofs)
 /**
 * 移動状態を初期化する.
 *
-* @param sprite 対象となるノード.
+* @param node 制御対象のノード.
 */
 void MoveBy::Initialize(Node& node)
 {
@@ -72,8 +75,8 @@ void MoveBy::Initialize(Node& node)
 /**
 * 移動状態を更新する.
 *
-* @param sprite  更新するノード.
-* @param ratio   始点・終点間の比率.
+* @param node    更新対象のノード.
+* @param elapsed 経過時間.
 */
 void MoveBy::Update(Node& node, glm::f32 elapsed)
 {
@@ -96,7 +99,7 @@ MoveXBy::MoveXBy(glm::f32 time, glm::f32 ofs)
 /**
 * 移動状態を初期化する.
 *
-* @param sprite 対象となるノード.
+* @param node 制御対象のノード.
 */
 void MoveXBy::Initialize(Node& node)
 {
@@ -107,8 +110,8 @@ void MoveXBy::Initialize(Node& node)
 /**
 * 移動状態を更新する.
 *
-* @param sprite  更新するノード.
-* @param ratio   始点・終点間の比率.
+* @param node    更新対象のノード.
+* @param elapsed 経過時間.
 */
 void MoveXBy::Update(Node& node, glm::f32 elapsed)
 {
@@ -133,7 +136,7 @@ MoveYBy::MoveYBy(glm::f32 time, glm::f32 ofs)
 /**
 * 移動状態を初期化する.
 *
-* @param sprite 対象となるノード.
+* @param node 制御対象のノード.
 */
 void MoveYBy::Initialize(Node& node)
 {
@@ -144,8 +147,8 @@ void MoveYBy::Initialize(Node& node)
 /**
 * 移動状態を更新する.
 *
-* @param sprite  更新するノード.
-* @param ratio   始点・終点間の比率.
+* @param node    更新対象のノード.
+* @param elapsed 経過時間.
 */
 void MoveYBy::Update(Node& node, glm::f32 elapsed)
 {
@@ -170,7 +173,7 @@ AccelBy::AccelBy(glm::f32 time, const glm::vec3& ofs)
 /**
 * 移動状態を初期化する.
 *
-* @param sprite 対象となるノード.
+* @param node 制御対象のノード.
 */
 void AccelBy::Initialize(Node& node)
 {
@@ -182,8 +185,8 @@ void AccelBy::Initialize(Node& node)
 /**
 * 加速を更新する.
 *
-* @param sprite  更新するノード.
-* @param ratio   始点・終点間の比率.
+* @param node    更新対象のノード.
+* @param elapsed 経過時間.
 */
 void AccelBy::Update(Node& node, glm::f32 ratio)
 {
@@ -196,7 +199,7 @@ void AccelBy::Update(Node& node, glm::f32 ratio)
 /**
 * 次のトウィーニングオブジェクトを設定する.
 *
-* @param sprite  操作対象ノード.
+* @param node 制御対象のノード.
 */
 bool Sequence::NextTween(Node& node)
 {
@@ -216,7 +219,7 @@ bool Sequence::NextTween(Node& node)
 /**
 * トウィーニング列を初期化する.
 *
-* @param sprite  操作対象ノード.
+* @param node 制御対象のノード.
 */
 void Sequence::Initialize(Node& node)
 {
@@ -229,8 +232,8 @@ void Sequence::Initialize(Node& node)
 /**
 * トウィーニング列を更新する.
 *
-* @param sprite  操作対象ノード.
-* @param ratio   始点・終点間の比率.
+* @param node    更新対象のノード.
+* @param elapsed 経過時間.
 */
 void Sequence::Update(Node& node, glm::f32 elapsed)
 {
@@ -249,8 +252,8 @@ void Sequence::Update(Node& node, glm::f32 elapsed)
 /**
 * 状態を更新する.
 *
-* @param sprite  更新するノード.
-* @param dt      前回の更新からの経過時間.
+* @param node  更新対象のノード.
+* @param dt    前回の更新からの経過時間.
 */
 void Animate::Update(Node& node, glm::f32 dt)
 {
@@ -272,7 +275,7 @@ void Animate::Update(Node& node, glm::f32 dt)
 /**
 * 移動状態を初期化する.
 *
-* @param sprite 対象となるノード.
+* @param node 制御対象のノード.
 */
 void Parallelize::Initialize(Node& node)
 {
@@ -285,8 +288,8 @@ void Parallelize::Initialize(Node& node)
 /**
 * 移動状態を更新する.
 *
-* @param sprite  更新するノード.
-* @param ratio   始点・終点間の比率.
+* @param node    更新対象のノード.
+* @param elapsed 経過時間.
 */
 void Parallelize::Update(Node& node, glm::f32 elapsed)
 {
