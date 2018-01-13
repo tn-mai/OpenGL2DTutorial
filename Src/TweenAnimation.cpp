@@ -159,44 +159,6 @@ void MoveYBy::Update(Node& node, glm::f32 elapsed)
 }
 
 /**
-* コンストラクタ.
-*
-* @param time  動作時間.
-* @param ofs   加速度.
-*/
-AccelBy::AccelBy(glm::f32 time, const glm::vec3& ofs)
-  : Tween(time)
-  , offset(ofs)
-{
-}
-
-/**
-* 移動状態を初期化する.
-*
-* @param node 制御対象のノード.
-*/
-void AccelBy::Initialize(Node& node)
-{
-  Tween::Initialize(node);
-  v0 = node.Velocity();
-  p0 = node.Position();
-}
-
-/**
-* 加速を更新する.
-*
-* @param node    更新対象のノード.
-* @param elapsed 経過時間.
-*/
-void AccelBy::Update(Node& node, glm::f32 ratio)
-{
-  const float t = TotalDuration() * ratio;
-  const glm::vec3 at = offset * t;
-  node.Velocity(v0 + at);
-  node.Position(p0 + v0 * t + 0.5f * at * t);
-}
-
-/**
 * 次のトウィーニングオブジェクトを設定する.
 *
 * @param node 制御対象のノード.

@@ -146,24 +146,6 @@ private:
   glm::f32 offset; ///< 移動終了座標.
 };
 
-class AccelBy : public Tween
-{
-public:
-  AccelBy() = default;
-  AccelBy(glm::f32 d, const glm::vec3& ofs);
-  AccelBy(const AccelBy&) = default;
-  AccelBy& operator=(const AccelBy&) = default;
-  virtual ~AccelBy() = default;
-
-  virtual void Initialize(Node&) override;
-  virtual void Update(Node&, glm::f32) override;
-
-private:
-  glm::vec3 v0;
-  glm::vec3 p0;
-  glm::vec3 offset;
-};
-
 /**
 * トウィーニングの列.
 */
