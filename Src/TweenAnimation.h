@@ -112,7 +112,7 @@ class MoveBy : public Tween
 {
 public:
   MoveBy() = default;
-  MoveBy(glm::f32 d, const glm::vec3& ofs, EasingType e = EasingType::Linear, Target t = Target::XYZ);
+  MoveBy(glm::f32 d, const glm::vec3& v, EasingType e = EasingType::Linear, Target t = Target::XYZ);
   MoveBy(const MoveBy&) = default;
   MoveBy& operator=(const MoveBy&) = default;
   virtual ~MoveBy() = default;
@@ -122,7 +122,7 @@ public:
 
 private:
   glm::vec3 start; ///< 移動開始座標.
-  glm::vec3 offset; ///< 移動終了座標.
+  glm::vec3 vector; ///< 移動する距離.
   Target target = Target::XYZ; ///< 操作対象.
 };
 

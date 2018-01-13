@@ -67,12 +67,12 @@ void Tween::Step(Node& node, glm::f32 elapsed)
 /**
 * コンストラクタ.
 *
-* @param time  動作時間.
-* @param ofs   移動先の相対座標.
+* @param d  動作時間.
+* @param v  移動する距離.
 */
-MoveBy::MoveBy(glm::f32 time, const glm::vec3& ofs, EasingType e, Target t)
-  : Tween(time, e)
-  , offset(ofs)
+MoveBy::MoveBy(glm::f32 d, const glm::vec3& v, EasingType e, Target t)
+  : Tween(d, e)
+  , vector(v)
   , target(t)
 {
 }
@@ -97,7 +97,7 @@ void MoveBy::Initialize(Node& node)
 void MoveBy::Update(Node& node, glm::f32 elapsed)
 {
   const glm::f32 ratio = elapsed * ReciprocalUnitDuration();
-  const glm::vec3 cur = start + glm::mix(glm::vec3(), offset, ratio);
+  const glm::vec3 cur = start + glm::mix(glm::vec3(), vector, ratio);
   glm::vec3 pos = node.Position();
   if (static_cast<int>(target) & static_cast<int>(Target::X)) {
     pos.x = cur.x;
