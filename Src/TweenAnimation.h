@@ -59,7 +59,6 @@ public:
   virtual void Initialize(Node&) { total = 0; }
   void Step(Node& node, glm::f32 ratio);
   virtual void Update(Node&, glm::f32 ratio) = 0;
-  virtual void Finalize(Node&) {}
 
 private:
   glm::f32 duration = 1.0f; ///< “®ìŽžŠÔ.
