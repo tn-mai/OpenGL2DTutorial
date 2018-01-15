@@ -57,7 +57,7 @@ public:
   void Easing(EasingType type) { easing = type; }
 
   virtual void Initialize(Node&) { total = 0; }
-  void Step(Node& node, glm::f32 ratio);
+  void UpdateWithEasing(Node& node, glm::f32 ratio);
   virtual void Update(Node&, glm::f32 ratio) = 0;
 
 private:

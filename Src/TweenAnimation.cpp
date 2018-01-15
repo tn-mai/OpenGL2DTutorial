@@ -29,7 +29,7 @@ Tween::Tween(glm::f32 d, EasingType e, glm::u32 t) :
 * @param node    更新対象のノード.
 * @param elapsed 経過時間.
 */
-void Tween::Step(Node& node, glm::f32 elapsed)
+void Tween::UpdateWithEasing(Node& node, glm::f32 elapsed)
 {
   const glm::u32 current = static_cast<glm::u32>(elapsed * ReciprocalUnitDuration());
   for (glm::u32 i = total; i < current; ++i) {
@@ -93,11 +93,11 @@ void Animate::Update(Node& node, glm::f32 dt)
   }
   elapsed += dt;
   if (elapsed >= tween->TotalDuration() && isLoop) {
-    tween->Step(node, tween->TotalDuration());
+    tween->UpdateWithEasing(node, tween->TotalDuration());
     tween->Initialize(node);
     elapsed -= tween->TotalDuration();
   }
-  tween->Step(node, elapsed);
+  tween->UpdateWithEasing(node, elapsed);
 }
 
 /**
@@ -200,12 +200,12 @@ void Sequence::Update(Node& node, glm::f32 elapsed)
     return;
   }
   while (elapsed >= currentDurationEnd) {
-    seq[index]->Step(node, seq[index]->TotalDuration());
+    seq[index]->UpdateWithEasing(node, seq[index]->TotalDuration());
     if (!NextTween(node)) {
       return;
     }
   }
-  seq[index]->Step(node, elapsed - currentDurationBegin);
+  seq[index]->UpdateWithEasing(node, elapsed - currentDurationBegin);
 }
 
 /**
@@ -233,7 +233,7 @@ void Parallelize::Update(Node& node, glm::f32 elapsed)
     return;
   }
   for (auto& e : tweens) {
-    e->Step(node, elapsed);
+    e->UpdateWithEasing(node, elapsed);
   }
 }
 
