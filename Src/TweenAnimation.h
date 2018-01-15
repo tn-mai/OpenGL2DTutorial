@@ -76,10 +76,10 @@ class Animate
 {
 public:
   Animate() = default;
-  ~Animate() = default;
   explicit Animate(const TweenPtr& p) { Tween(p); }
   Animate(const Animate&) = delete;
   Animate& operator=(const Animate&) = delete;
+  ~Animate() = default;
 
   void Tween(const TweenPtr& p) {
     tween = p;
