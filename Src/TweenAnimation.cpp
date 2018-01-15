@@ -165,7 +165,7 @@ void Sequence::Add(const TweenPtr& p)
 */
 bool Sequence::NextTween(Node& node)
 {
-  if (index >= static_cast<int>(seq.size() - 1)) {
+  if (index >= static_cast<int>(seq.size()) - 1) {
     return false;
   }
   ++index;
