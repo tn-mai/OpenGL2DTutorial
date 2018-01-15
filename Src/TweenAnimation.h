@@ -42,8 +42,8 @@ class Tween
 public:
   Tween() = default;
   explicit Tween(glm::f32 d, EasingType e = EasingType::Linear, glm::u32 t = 1);
-  Tween(const Tween&) = default;
-  Tween& operator=(const Tween&) = default;
+  Tween(const Tween&) = delete;
+  Tween& operator=(const Tween&) = delete;
   virtual ~Tween() = default;
 
   glm::f32 TotalDuration() const { return duration * times; }
@@ -79,8 +79,8 @@ public:
   Animate() = default;
   ~Animate() = default;
   explicit Animate(const TweenPtr& p) { Tween(p); }
-  Animate(const Animate&) = default;
-  Animate& operator=(const Animate&) = default;
+  Animate(const Animate&) = delete;
+  Animate& operator=(const Animate&) = delete;
 
   void Tween(const TweenPtr& p) {
     tween = p;
@@ -106,15 +106,15 @@ private:
 typedef std::shared_ptr<Animate> AnimatePtr;
 
 /**
-* ノードの移動アニメーション.
+* 移動アニメーション.
 */
 class MoveBy : public Tween
 {
 public:
   MoveBy() = default;
   MoveBy(glm::f32 d, const glm::vec3& v, EasingType e = EasingType::Linear, Target t = Target::XYZ);
-  MoveBy(const MoveBy&) = default;
-  MoveBy& operator=(const MoveBy&) = default;
+  MoveBy(const MoveBy&) = delete;
+  MoveBy& operator=(const MoveBy&) = delete;
   virtual ~MoveBy() = default;
 
   virtual void Initialize(Node&) override;
@@ -133,8 +133,8 @@ class Sequence : public Tween
 {
 public:
   explicit Sequence(glm::u32 t = 1) : Tween(0.0f, EasingType::Linear, t) {}
-  Sequence(const Sequence&) = default;
-  Sequence& operator=(const Sequence&) = default;
+  Sequence(const Sequence&) = delete;
+  Sequence& operator=(const Sequence&) = delete;
   virtual ~Sequence() = default;
 
   void Add(const TweenPtr& p) {
@@ -161,8 +161,8 @@ class Parallelize : public Tween
 {
 public:
   explicit Parallelize(glm::u32 t = 1) : Tween(0.0f, EasingType::Linear, t) {}
-  Parallelize(const Parallelize&) = default;
-  Parallelize& operator=(const Parallelize&) = default;
+  Parallelize(const Parallelize&) = delete;
+  Parallelize& operator=(const Parallelize&) = delete;
   virtual ~Parallelize() = default;
 
   void Add(const TweenPtr& p) {
