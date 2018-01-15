@@ -70,7 +70,7 @@ private:
 typedef std::shared_ptr<Tween> TweenPtr;
 
 /**
-* ノードのトウィーンアニメーションを制御するクラス.
+* トウィーニングを制御するクラス.
 */
 class Animate
 {
