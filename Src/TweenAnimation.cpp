@@ -93,6 +93,7 @@ void Animate::Update(Node& node, glm::f32 dt)
   }
   elapsed += dt;
   if (elapsed >= tween->TotalDuration() && isLoop) {
+    tween->Step(node, tween->TotalDuration());
     tween->Initialize(node);
     elapsed -= tween->TotalDuration();
   }
