@@ -68,7 +68,7 @@ private:
   Node* parent = nullptr; ///< 親ノード.
   std::vector<Node*> children; ///< 子ノードのリスト.
 
-  TweenAnimation::AnimatePtr tweener;
+  TweenAnimation::AnimatePtr tweener; ///< トウィーニング制御.
 };
 
 #endif // NODE_H_INCLUDED
