@@ -65,6 +65,18 @@ void Tween::Step(Node& node, glm::f32 elapsed)
 }
 
 /**
+* 制御するトウィーニングオブジェクトを設定する.
+*
+* @param p トウィーニングオブジェクトへのポインタ.
+*/
+void Animate::Tween(const TweenPtr& p)
+{
+  tween = p;
+  elapsed = 0.0f;
+  isInitialized = false;
+}
+
+/**
 * 状態を更新する.
 *
 * @param node  更新対象のノード.

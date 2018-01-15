@@ -81,10 +81,7 @@ public:
   Animate& operator=(const Animate&) = delete;
   ~Animate() = default;
 
-  void Tween(const TweenPtr& p) {
-    tween = p;
-    elapsed = 0.0f;
-  }
+  void Tween(const TweenPtr& p);
   const TweenPtr& Tween() const { return tween; }
 
   void Pause() { isPause = true; }
