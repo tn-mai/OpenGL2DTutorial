@@ -133,13 +133,9 @@ public:
   Sequence& operator=(const Sequence&) = delete;
   virtual ~Sequence() = default;
 
-  void Add(const TweenPtr& p) {
-    seq.push_back(p);
-    UnitDuration(UnitDuration() + p->TotalDuration());
-  }
-
   virtual void Initialize(Node&) override;
   virtual void Update(Node&, glm::f32) override;
+  void Add(const TweenPtr&);
 
 private:
   bool NextTween(Node&);

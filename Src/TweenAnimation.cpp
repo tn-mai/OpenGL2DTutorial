@@ -147,6 +147,17 @@ void MoveBy::Update(Node& node, glm::f32 elapsed)
 }
 
 /**
+* トウィーニングオブジェクトを追加する.
+*
+* @param p 追加するトウィーニングオブジェクト.
+*/
+void Sequence::Add(const TweenPtr& p)
+{
+  seq.push_back(p);
+  UnitDuration(UnitDuration() + p->TotalDuration());
+}
+
+/**
 * 次のトウィーニングオブジェクトを設定する.
 *
 * @param node 制御対象のノード.
