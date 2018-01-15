@@ -47,15 +47,15 @@ void Tween::Step(Node& node, glm::f32 elapsed)
     ratio *= ratio;
     break;
   case EasingType::EaseOut:
-    ratio *= (2.0f - ratio);
+    ratio = 2.0f * ratio - ratio * ratio;
     break;
   case EasingType::EaseInOut:
-    if (ratio < 0.5f) {
-      ratio *= 2.0f;
+    ratio *= 2.0f;
+    if (ratio < 1.0f) {
       ratio *= ratio;
     } else {
-      ratio = (ratio - 0.5f) * 2.0f;
-      ratio *= (2.0f - ratio);
+      ratio -= 1.0f;
+      ratio = 2.0f * ratio - ratio * ratio;
       ratio += 1.0f;
     }
     ratio *= 0.5f;
