@@ -140,10 +140,10 @@ public:
 private:
   bool NextTween(Node&);
 
-  std::vector<TweenPtr> seq;
-  int index = -1;
-  glm::f32 currentDurationStart;
-  glm::f32 currentDurationEnd;
+  std::vector<TweenPtr> seq; ///< トウィーニングリスト.
+  int index = -1;///< 実行中のトウィーニングオブジェクトのインデックス.
+  glm::f32 currentDurationBegin;///< 実行中のトウィーニングオブジェクトの開始時間.
+  glm::f32 currentDurationEnd;///< 実行中のトウィーニングオブジェクトの終了時間.
 };
 
 /**

@@ -168,7 +168,7 @@ bool Sequence::NextTween(Node& node)
     return false;
   }
   ++index;
-  currentDurationStart = currentDurationEnd;
+  currentDurationBegin = currentDurationEnd;
   currentDurationEnd += seq[index]->TotalDuration();
   seq[index]->Initialize(node);
   return true;
@@ -204,8 +204,8 @@ void Sequence::Update(Node& node, glm::f32 elapsed)
       return;
     }
   }
-  seq[index]->Step(node, elapsed - currentDurationStart);
- }
+  seq[index]->Step(node, elapsed - currentDurationBegin);
+}
 
 /**
 * ˆÚ“®ó‘Ô‚ğ‰Šú‰»‚·‚é.
