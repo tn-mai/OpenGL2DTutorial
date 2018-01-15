@@ -133,7 +133,7 @@ void MoveBy::Initialize(Node& node)
 void MoveBy::Update(Node& node, glm::f32 elapsed)
 {
   const glm::f32 ratio = elapsed * ReciprocalUnitDuration();
-  const glm::vec3 cur = start + glm::mix(glm::vec3(), vector, ratio);
+  const glm::vec3 cur = start + vector * ratio;
   glm::vec3 pos = node.Position();
   if (static_cast<int>(target) & static_cast<int>(Target::X)) {
     pos.x = cur.x;
