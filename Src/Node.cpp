@@ -6,6 +6,19 @@
 #include <algorithm>
 
 /**
+* デストラクタ.
+*/
+Node::~Node()
+{
+  if (parent) {
+    parent->RemoveChild(this);
+  }
+  for (auto& e : children) {
+    e->parent = nullptr;
+  }
+}
+
+/**
 * 子ノードを追加する.
 *
 * @param node 追加する子ノードへのポインタ.
