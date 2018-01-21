@@ -101,6 +101,17 @@ Sprite::Sprite(const TexturePtr& tex) :
 }
 
 /**
+* 描画に使用するテクスチャを指定する.
+*
+* @param tex 描画に使用するテクスチャ.
+*/
+void Sprite::Texture(const TexturePtr& tex)
+{
+  texture = tex;
+  Rectangle({ glm::vec2(), glm::vec2(tex->Width(), tex->Height()) });
+}
+
+/**
 * スプライトの状態を更新する.
 *
 * @param dt 前回の更新からの経過時間.

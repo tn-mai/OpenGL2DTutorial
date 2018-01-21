@@ -31,6 +31,7 @@ public:
   Sprite& operator=(const Sprite&) = default;
 
   const TexturePtr& Texture() const { return texture; }
+  void Texture(const TexturePtr& tex);
   void Rectangle(const Rect& r) { rect = r; }
   const Rect& Rectangle() const { return rect; }
   void Color(const glm::vec4& c) { color = c; }
