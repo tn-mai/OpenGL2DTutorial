@@ -2,6 +2,7 @@
 * @file Title.cpp
 */
 #include "Title.h"
+#include "MainGame.h"
 #include "../GLFWEW.h"
 
 namespace Scene {
@@ -98,7 +99,11 @@ bool Title::Update(Manager& manager, float dt)
     }
   }
   if (gamepad.buttonDown & GamePad::START) {
-    // メインゲーム画面へ.
+    if (select == 0) {
+      manager.NextScene(std::make_shared<MainGame>()); // メインゲーム画面へ.
+    } else {
+      manager.End(); // ゲーム終了.
+    }
   }
 
   for (auto& e : sprPushStart) {
