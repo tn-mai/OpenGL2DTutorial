@@ -45,6 +45,7 @@ bool Manager::Update(float dt)
     return false;
   }
   currentScene->Update(*this, dt);
+  rootNode.UpdateRecursive(dt);
   if (!nextScene) {
     return true;
   }

@@ -165,7 +165,6 @@ int main()
 #else
     sceneManager.Update(deltaTime);
     Node& rootNode = sceneManager.RootNode();
-    rootNode.UpdateRecursive(deltaTime);
     spriteRenderer.Update(rootNode);
 #endif
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
