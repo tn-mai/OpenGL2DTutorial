@@ -6,6 +6,14 @@
 namespace Scene {
 
 /**
+* コンストラクタ.
+*/
+Manager::Manager()
+{
+  rootNode.Name("rootNode");
+}
+
+/**
 * ゲームを開始する.
 *
 * @param start 開始するシーン.

@@ -29,6 +29,7 @@ using ScenePtr = std::shared_ptr<Scene>;
 class Manager
 {
 public:
+  Manager();
   bool Start(const ScenePtr& start);
   bool Update(float dt);
   void NextScene(const ScenePtr& next);
