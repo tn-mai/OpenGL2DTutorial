@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Sprite.h"
+#include "Scene\Title.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 /// タイムラインオブジェクトの配列.
@@ -37,7 +38,7 @@ int main()
   if (!window.Init(800, 600, "OpenGL Tutorial")) {
     return 1;
   }
-
+#if 0
   TexturePtr tex = Texture::LoadFromFile("Res/Objects.dds");
   TexturePtr texBg = Texture::LoadFromFile("Res/UnknownPlanet.dds");
   if (!tex || !texBg) {
@@ -120,7 +121,12 @@ int main()
 #endif
     boss.Tweener(tweenBoss);
   }
-
+#else
+  SpriteRenderer spriteRenderer;
+  spriteRenderer.Init(10000);
+  Scene::Manager sceneManager;
+  sceneManager.Start(std::make_shared<Scene::Title>());
+#endif
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glEnable(GL_BLEND);
@@ -131,6 +137,7 @@ int main()
   while (!window.ShouldClose()) {
     window.Update();
     const float deltaTime = window.DeltaTime();
+#if 0
     const GamePad& gamepad = window.GetGamePad();
     glm::vec3 vec;
     if (gamepad.buttons & GamePad::DPAD_LEFT) {
@@ -155,7 +162,12 @@ int main()
 
     rootNode.UpdateRecursive(deltaTime);
     spriteRenderer.Update(rootNode);
-
+#else
+    sceneManager.Update(deltaTime);
+    Node& rootNode = sceneManager.RootNode();
+    rootNode.UpdateRecursive(deltaTime);
+    spriteRenderer.Update(rootNode);
+#endif
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     spriteRenderer.Draw(glm::vec2(800, 600));
