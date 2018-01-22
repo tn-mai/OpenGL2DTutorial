@@ -27,6 +27,14 @@ public:
   virtual bool Initialize(Manager& manager) = 0;
   virtual bool Update(Manager& manager, float dt) = 0;
   virtual void Finalize(Manager& manager) = 0;
+
+  Node* RootNode() { return &rootNode; }
+  const Node* RootNode() const { return &rootNode; }
+  void AddChild(Node* child) { rootNode.AddChild(child); }
+  void RemoveChild(Node* child) { rootNode.RemoveChild(child);  }
+
+private:
+  Node rootNode;
 };
 
 /// シーン用ポインタ型.
@@ -44,11 +52,7 @@ public:
   void NextScene(const ScenePtr& next);
   void End();
 
-  void AddChild(Node* child) { sceneRootNode.AddChild(child); }
-  void RemoveChild(Node* child) { sceneRootNode.RemoveChild(child); }
   const Node& OriginNode() const { return originNode; }
-  Node& RootNode() { return sceneRootNode; }
-  const Node& RootNode() const { return sceneRootNode; }
 
 private:
   enum class FadeMode {

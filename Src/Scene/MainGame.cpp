@@ -57,9 +57,9 @@ bool MainGame::Initialize(Manager& manager)
   background.Texture(texBg);
   background.Name("bg");
 
-  manager.AddChild(&background);
-  manager.AddChild(&boss);
-  manager.AddChild(&sprite);
+  AddChild(&background);
+  AddChild(&boss);
+  AddChild(&sprite);
 
   escortNode.Position(glm::vec3(-16, 0, 0));
   boss.AddChild(&escortNode);

@@ -11,8 +11,6 @@ namespace Scene {
 Manager::Manager(const glm::vec2& screenSize)
 {
   originNode.Name("originNode");
-  sceneRootNode.Name("sceneRootNode");
-  originNode.AddChild(&sceneRootNode);
   sprColorFilter.Scale(screenSize * (1.0f / 4.0f));
   sprColorFilter.Position(glm::vec3(0, 0, 500));
 }
@@ -32,6 +30,7 @@ bool Manager::Start(const ScenePtr& start)
     sprColorFilter.Texture(texColorFilter);
   }
   currentScene = start;
+  originNode.AddChild(currentScene->RootNode());
   nextScene = nullptr;
   if (!currentScene->Initialize(*this)) {
     currentScene = nullptr;
@@ -88,6 +87,7 @@ bool Manager::Update(float dt)
   originNode.RemoveChild(&sprColorFilter);
   currentScene->Finalize(*this);
   currentScene = nullptr;
+  originNode.AddChild(nextScene->RootNode());
   if (!nextScene->Initialize(*this)) {
     nextScene = nullptr;
     return false;

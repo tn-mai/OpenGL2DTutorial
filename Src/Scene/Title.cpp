@@ -28,7 +28,7 @@ bool Title::Initialize(Manager& manager)
     return false;
   }
   sprBg.Texture(texBg);
-  manager.AddChild(&sprBg);
+  AddChild(&sprBg);
 
   texTitle = Texture::LoadFromFile("Res/Title.dds");
   if (!texTitle) {
@@ -36,7 +36,7 @@ bool Title::Initialize(Manager& manager)
   }
   sprTitle.Texture(texTitle);
   sprTitle.Position(glm::vec3(0, 96, 0));
-  manager.AddChild(&sprTitle);
+  AddChild(&sprTitle);
 
   texFont = Texture::LoadFromFile("Res/Font.dds");
   if (!texFont) {
@@ -53,7 +53,7 @@ bool Title::Initialize(Manager& manager)
       sprPushStart.back().Rectangle({ glm::vec2(x * 512 / 16, y * 512 / 8), glm::vec2(32, 64) });
       sprPushStart.back().Position(offset);
       sprPushStart.back().Color(color[0]);
-      manager.AddChild(&sprPushStart.back());
+      AddChild(&sprPushStart.back());
       offset.x += 32.0f;
     }
   }
@@ -68,7 +68,7 @@ bool Title::Initialize(Manager& manager)
       sprExit.back().Rectangle({glm::vec2(x * 512 / 16, y * 512 / 8), glm::vec2(32, 64)});
       sprExit.back().Position(offset);
       sprExit.back().Color(color[1]);
-      manager.AddChild(&sprExit.back());
+      AddChild(&sprExit.back());
       offset.x += 32.0f;
     }
   }
