@@ -47,6 +47,10 @@ class Manager
 {
 public:
   Manager(const glm::vec2& screenSize);
+  ~Manager() = default;
+  Manager(const Manager&) = delete;
+  Manager& operator=(const Manager&) = delete;
+
   bool Start(const ScenePtr& start);
   bool Update(float dt);
   void NextScene(const ScenePtr& next);
