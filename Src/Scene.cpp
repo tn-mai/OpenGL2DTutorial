@@ -79,24 +79,23 @@ bool Manager::Update(float dt)
     break;
   }
 
-  originNode.UpdateRecursive(dt);
-
-  if(fadeMode != FadeMode::None || !nextScene) {
-    return true;
-  }
-  originNode.RemoveChild(&sprColorFilter);
-  currentScene->Finalize(*this);
-  currentScene = nullptr;
-  originNode.AddChild(nextScene->RootNode());
-  if (!nextScene->Initialize(*this)) {
+  if (fadeMode == FadeMode::None && nextScene) {
+    originNode.RemoveChild(&sprColorFilter);
+    currentScene->Finalize(*this);
+    currentScene = nullptr;
+    originNode.AddChild(nextScene->RootNode());
+    if (!nextScene->Initialize(*this)) {
+      nextScene = nullptr;
+      return false;
+    }
+    currentScene = nextScene;
     nextScene = nullptr;
-    return false;
+    fadeMode = FadeMode::In;
+    fadeTimer = 0.5f;
+    originNode.AddChild(&sprColorFilter);
+    dt = 0.0f;
   }
-  currentScene = nextScene;
-  nextScene = nullptr;
-  fadeMode = FadeMode::In;
-  fadeTimer = 0.5f;
-  originNode.AddChild(&sprColorFilter);
+  originNode.UpdateRecursive(dt);
   return true;
 }
 
