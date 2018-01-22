@@ -14,6 +14,34 @@ static const glm::vec4 color[2] = {
 };
 
 /**
+* テキストをスプライトにする.
+*
+* @param v          スプライト化したテキストを格納するvector.
+* @param offset     スプライト表示開始座標.
+* @param text       スプライト化するテキスト.
+* @param colorIndex 文字の色を示すインデックス.
+*/
+void Title::SetTextSprite(std::vector<Sprite>& v, glm::vec3 offset, const char* text, int colorIndex)
+{
+  static const glm::vec2 fontSize(32, 64);
+  v.reserve(std::strlen(text));
+  while (*text) {
+    if (*text > ' ') {
+      const int code = *text - ' ';
+      const float x = static_cast<float>(code % 16);
+      const float y = static_cast<float>(7 - code / 16);
+      v.push_back(Sprite(texFont));
+      v.back().Rectangle({ glm::vec2(x * fontSize.x, y * fontSize.y), fontSize });
+      v.back().Position(offset);
+      v.back().Color(color[colorIndex]);
+      AddChild(&v.back());
+    }
+    offset.x += fontSize.x;
+    ++text;
+  }
+}
+
+/**
 * タイトル画面の初期化.
 *
 * @param manager シーン管理クラス.
@@ -42,36 +70,8 @@ bool Title::Initialize(Manager& manager)
   if (!texFont) {
     return false;
   }
-  {
-    glm::vec3 offset(-32 * 5, -128, 0);
-    sprPushStart.reserve(32);
-    for (auto e : "PUSH START") {
-      const int code = e - ' ';
-      const int x = code % 16;
-      const int y = 7 - code / 16;
-      sprPushStart.push_back(Sprite(texFont));
-      sprPushStart.back().Rectangle({ glm::vec2(x * 512 / 16, y * 512 / 8), glm::vec2(32, 64) });
-      sprPushStart.back().Position(offset);
-      sprPushStart.back().Color(color[0]);
-      AddChild(&sprPushStart.back());
-      offset.x += 32.0f;
-    }
-  }
-  {
-    glm::vec3 offset(-32 * 2, -128 - 64, 0);
-    sprExit.reserve(32);
-    for (auto e : "EXIT") {
-      const int code = e - ' ';
-      const int x = code % 16;
-      const int y = 7 - code / 16;
-      sprExit.push_back(Sprite(texFont));
-      sprExit.back().Rectangle({glm::vec2(x * 512 / 16, y * 512 / 8), glm::vec2(32, 64)});
-      sprExit.back().Position(offset);
-      sprExit.back().Color(color[1]);
-      AddChild(&sprExit.back());
-      offset.x += 32.0f;
-    }
-  }
+  SetTextSprite(sprPushStart, glm::vec3(-32 * 5, -128, 0), "PUSH START", 0);
+  SetTextSprite(sprExit, glm::vec3(-32 * 2, -192, 0), "EXIT", 1);
 
   return true;
 }

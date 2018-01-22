@@ -18,6 +18,8 @@ public:
   virtual void Finalize(Manager& manager) override;
 
 private:
+  void SetTextSprite(std::vector<Sprite>& v, glm::vec3 offset, const char* text, int colorIndex);
+
   TexturePtr texBg;
   TexturePtr texTitle;
   TexturePtr texFont;
