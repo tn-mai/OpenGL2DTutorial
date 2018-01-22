@@ -53,7 +53,7 @@ public:
 
   bool Start(const ScenePtr& start);
   bool Update(float dt);
-  void NextScene(const ScenePtr& next);
+  void ReplaceScene(const ScenePtr& next);
   void End();
 
   const Node& OriginNode() const { return originNode; }

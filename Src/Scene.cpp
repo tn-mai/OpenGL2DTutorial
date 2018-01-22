@@ -104,7 +104,7 @@ bool Manager::Update(float dt)
 *
 * @param next Ÿ‚ÉÀs‚·‚éƒV[ƒ“.
 */
-void Manager::NextScene(const ScenePtr& next)
+void Manager::ReplaceScene(const ScenePtr& next)
 {
   nextScene = next;
   fadeMode = FadeMode::Out;

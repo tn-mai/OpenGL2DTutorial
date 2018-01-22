@@ -100,7 +100,7 @@ bool Title::Update(Manager& manager, float dt)
   }
   if (gamepad.buttonDown & GamePad::START) {
     if (select == 0) {
-      manager.NextScene(std::make_shared<MainGame>()); // メインゲーム画面へ.
+      manager.ReplaceScene(std::make_shared<MainGame>()); // メインゲーム画面へ.
     } else {
       manager.End(); // ゲーム終了.
     }
