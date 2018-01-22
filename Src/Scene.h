@@ -19,6 +19,11 @@ class Manager;
 class Scene
 {
 public:
+  Scene() = default;
+  virtual ~Scene() = default;
+  Scene(const Scene&) = delete;
+  Scene& operator=(const Scene&) = delete;
+
   virtual bool Initialize(Manager& manager) = 0;
   virtual bool Update(Manager& manager, float dt) = 0;
   virtual void Finalize(Manager& manager) = 0;
