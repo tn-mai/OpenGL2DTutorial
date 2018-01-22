@@ -5,10 +5,12 @@
 #ifndef SCENE_H_INCLUDED
 #define SCENE_H_INCLUDED
 #include <memory>
-#include "Node.h"
+#include "Sprite.h"
+#include "Texture.h"
 
 namespace Scene {
 
+// 先行宣言.
 class Manager;
 
 /**
@@ -21,6 +23,8 @@ public:
   virtual bool Update(Manager& manager, float dt) = 0;
   virtual void Finalize(Manager& manager) = 0;
 };
+
+/// シーン用ポインタ型.
 using ScenePtr = std::shared_ptr<Scene>;
 
 /**
@@ -29,20 +33,32 @@ using ScenePtr = std::shared_ptr<Scene>;
 class Manager
 {
 public:
-  Manager();
+  Manager(const glm::vec2& screenSize);
   bool Start(const ScenePtr& start);
   bool Update(float dt);
   void NextScene(const ScenePtr& next);
   void End();
-  void AddChild(Node* child) { rootNode.AddChild(child); }
-  void RemoveChild(Node* child) { rootNode.RemoveChild(child); }
-  Node& RootNode() { return rootNode; }
-  const Node& RootNode() const { return rootNode; }
+
+  void AddChild(Node* child) { sceneRootNode.AddChild(child); }
+  void RemoveChild(Node* child) { sceneRootNode.RemoveChild(child); }
+  const Node& OriginNode() const { return originNode; }
+  Node& RootNode() { return sceneRootNode; }
+  const Node& RootNode() const { return sceneRootNode; }
 
 private:
+  enum class FadeMode {
+    None,
+    Out,
+    In,
+  };
+  TexturePtr texColorFilter;
+  Sprite sprColorFilter;
+  FadeMode fadeMode = FadeMode::In;
+  float fadeTimer = 0.5f;
   ScenePtr currentScene;
   ScenePtr nextScene;
-  Node rootNode;
+  Node originNode;
+  Node sceneRootNode;
   bool isEnd = false;
 };
 

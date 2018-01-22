@@ -13,7 +13,7 @@ int main()
   }
   SpriteRenderer spriteRenderer;
   spriteRenderer.Init(10000);
-  Scene::Manager sceneManager;
+  Scene::Manager sceneManager(glm::vec2(800, 600));
   sceneManager.Start(std::make_shared<Scene::Title>());
 
   glEnable(GL_DEPTH_TEST);
@@ -30,7 +30,7 @@ int main()
     if (!sceneManager.Update(deltaTime)) {
       break;
     }
-    spriteRenderer.Update(sceneManager.RootNode());
+    spriteRenderer.Update(sceneManager.OriginNode());
 
     glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
