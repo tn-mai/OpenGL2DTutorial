@@ -118,9 +118,10 @@ bool MainGame::Initialize(Manager& manager)
 }
 
 /**
-* メインゲーム画面の初期化.
+* メインゲーム画面の更新.
 *
 * @param manager シーン管理クラス.
+* @param dt      前回の更新からの経過時間.
 *
 * @retval true  成功.
 * @retval false 失敗.
@@ -153,7 +154,7 @@ bool MainGame::Update(Manager& manager, float dt)
 }
 
 /**
-* メインゲーム画面の初期化.
+* メインゲーム画面の後始末.
 *
 * @param manager シーン管理クラス.
 */
