@@ -53,6 +53,7 @@ bool Manager::Update(float dt)
   if (isEnd) {
     currentScene->Finalize(*this);
     currentScene = nullptr;
+    nextScene = nullptr;
     return false;
   }
   currentScene->Update(*this, dt);
@@ -119,7 +120,6 @@ void Manager::ReplaceScene(const ScenePtr& next)
 */
 void Manager::End()
 {
-  nextScene = nullptr;
   isEnd = true;
 }
 
