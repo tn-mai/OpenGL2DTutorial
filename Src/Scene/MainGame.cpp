@@ -4,8 +4,86 @@
 #include "MainGame.h"
 #include "../GLFWEW.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <algorithm>
 
 namespace Scene {
+
+class MoveByVelocity : public TweenAnimation::Tween {
+public:
+  MoveByVelocity(const glm::vec3& v) : Tween(100, TweenAnimation::EasingType::Linear), velocity(v) {}
+  virtual void Update(Node& node, glm::f32 dt) override {
+    node.Position(node.Position() + velocity * dt);
+  }
+private:
+  glm::vec3 velocity;
+};
+
+class RemoveIfOutOfAraa : public TweenAnimation::Tween {
+public:
+  RemoveIfOutOfAraa(MainGame* scene, const Rect& r) : Tween(100, TweenAnimation::EasingType::Linear), scene(scene), area(r) {}
+  virtual void Update(Node& node, glm::f32 dt) override {
+    const glm::vec3 pos = node.Position();
+    if (pos.x < area.origin.x || pos.x > area.origin.x + area.size.x ||
+      pos.y < area.origin.y || pos.y > area.origin.y + area.size.y) {
+      static_cast<CollidableSprite&>(node).Die();
+    }
+  }
+
+private:
+  MainGame *scene;
+  Rect area;
+};
+
+class AimingShot : public TweenAnimation::Tween
+{
+public:
+  AimingShot(MainGame* scene, const Node* target) : scene(scene), target(target) {}
+  virtual void Update(Node& node, glm::f32 elapsed) override {
+//    scene->AddChild();
+  }
+
+private:
+  MainGame* scene;
+  const Node* target = nullptr;
+};
+
+
+std::shared_ptr<CollidableSprite> CollidableSprite::create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)
+{
+  struct Impl : public CollidableSprite {
+    Impl(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1) : CollidableSprite(tex, pos, body, hp) {}
+  };
+  return std::make_unique<Impl>(tex, pos, body, hp);
+}
+
+void MainGame::PlayerShot(glm::f32 rot, glm::f32 vel, int atk)
+{
+  auto shot = CollidableSprite::create(tex, sprite.Position(), { {-32, -8 },{ 64, 16 }  }, 1);
+  const auto m = glm::rotate(glm::mat4(), glm::radians(rot), glm::vec3(0, 0, 1));
+  glm::vec3 velocity = glm::vec4(vel, 0, 0, 1) * m;
+  auto tween = std::make_shared<TweenAnimation::Parallelize>();
+  tween->Add(std::make_shared<TweenAnimation::MoveBy>(0.5f, glm::vec3(800, 0, 0)));
+  tween->Add(std::make_shared<RemoveIfOutOfAraa>(this, Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+  shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+  shot->Rectangle({ {64, 0},{64, 16} });
+  playerShotList.push_back(shot);
+  AddChild(shot.get());
+}
+
+void FreeDeadSprite(std::vector<CollidableSpritePtr>& targetList)
+{
+  auto itr = std::remove_if(targetList.begin(), targetList.end(), [](const CollidableSpritePtr& p) { return p->IsDead(); });
+  targetList.erase(itr, targetList.end());
+}
+/**
+*
+*/
+void MainGame::FreeAllDeadSprite()
+{
+  FreeDeadSprite(playerShotList);
+  FreeDeadSprite(enemyShotList);
+  FreeDeadSprite(enemyList);
+}
 
 /**
 * アニメーションデータの初期化.
@@ -37,8 +115,8 @@ TimelineList InitAnimationData()
 */
 bool MainGame::Initialize(Manager& manager)
 {
-  TexturePtr tex = Texture::LoadFromFile("Res/Objects.dds");
-  TexturePtr texBg = Texture::LoadFromFile("Res/UnknownPlanet.dds");
+  tex = Texture::LoadFromFile("Res/Objects.dds");
+  texBg = Texture::LoadFromFile("Res/UnknownPlanet.dds");
   if (!tex || !texBg) {
     return false;
   }
@@ -130,6 +208,9 @@ bool MainGame::Update(Manager& manager, float dt)
 {
   GLFWEW::Window& window = GLFWEW::Window::Instance();
   const GamePad& gamepad = window.GetGamePad();
+  if (gamepad.buttonDown & GamePad::A) {
+    PlayerShot(0, 100, 1);
+  }
   glm::vec3 vec;
   if (gamepad.buttons & GamePad::DPAD_LEFT) {
     vec.x = -1;
@@ -150,6 +231,9 @@ bool MainGame::Update(Manager& manager, float dt)
   for (auto e : escortNode.Children()) {
     e->Rotation(-escortNode.Rotation());
   }
+
+  FreeAllDeadSprite();
+
   return true;
 }
 
