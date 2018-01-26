@@ -40,8 +40,9 @@ public:
   void Animator(const FrameAnimation::AnimatePtr& anm) { animator = anm; }
   const FrameAnimation::AnimatePtr& Animator() const { return animator; }
 
-private:
   virtual void Update(glm::f32) override;
+
+private:
   virtual void Draw(SpriteRenderer&) const override;
 
   TexturePtr texture;
