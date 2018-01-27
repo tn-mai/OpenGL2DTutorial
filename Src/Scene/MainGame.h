@@ -86,6 +86,9 @@ private:
   Sprite background;
   Node escortNode;
 
+  int score = 0;
+  std::vector<Sprite> scoreList;
+
   std::vector<NodePtr> nodeList;
   std::vector<CollidableSpritePtr> playerShotList;
   std::vector<CollidableSpritePtr> enemyShotList;

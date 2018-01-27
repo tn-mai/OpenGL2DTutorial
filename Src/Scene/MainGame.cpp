@@ -2,6 +2,7 @@
 * @file MainGame.cpp
 */
 #include "MainGame.h"
+#include "../Font.h"
 #include "../GLFWEW.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
@@ -195,6 +196,10 @@ TimelineList InitAnimationData()
 */
 bool MainGame::Initialize(Manager& manager)
 {
+  if (!Font::Init()) {
+    return false;
+  }
+
   tex = Texture::LoadFromFile("Res/Objects.dds");
   texBg = Texture::LoadFromFile("Res/UnknownPlanet.dds");
   if (!tex || !texBg) {
@@ -219,6 +224,7 @@ bool MainGame::Initialize(Manager& manager)
   AddChild(&background);
   AddChild(&boss);
   AddChild(sprite.get());
+  Font::SetTextSprite(*RootNode(), scoreList, glm::vec3(-32 * 3, 300 - 32, 0), "000000", glm::vec4(1, 1, 1, 1));
 
   escortNode.Position(glm::vec3(-16, 0, 0));
   escortNode.Name("escortNode");
@@ -321,8 +327,13 @@ bool MainGame::Update(Manager& manager, float dt)
   DetectCollision(
     playerShotList.begin(), playerShotList.end(),
     enemyList.begin(), enemyList.end(),
-    [](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+    [this](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
     lhs->CountervailingHealth(*rhs.get());
+    if (rhs->IsDead()) {
+      score += 500;
+    } else {
+      score += 10;
+    }
   }
   );
   DetectCollision(
@@ -333,6 +344,13 @@ bool MainGame::Update(Manager& manager, float dt)
     lhs->CountervailingHealth(*rhs.get());
   }
   );
+
+  int scoreTmp = score;
+  for (size_t i = scoreList.size(); i > 0;) {
+    --i;
+    Font::SetChar(scoreList[i], (scoreTmp % 10) + '0');
+    scoreTmp /= 10;
+  }
 
   FreeAllDeadSprite();
 
