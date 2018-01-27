@@ -96,9 +96,9 @@ void MainGame::EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
   AddChild(shot.get());
 }
 
-void FreeDeadSprite(std::vector<CollidableSpritePtr>& targetList)
+void FreeDeadSprite(std::vector<NodePtr>& targetList)
 {
-  auto itr = std::remove_if(targetList.begin(), targetList.end(), [](const CollidableSpritePtr& p) { return p->IsDead(); });
+  auto itr = std::remove_if(targetList.begin(), targetList.end(), [](const NodePtr& p) { return std::static_pointer_cast<CollidableSprite>(p)->IsDead(); });
   targetList.erase(itr, targetList.end());
 }
 /**

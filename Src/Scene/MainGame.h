@@ -57,7 +57,7 @@ private:
   CollisionRect worldBody;
   int health;
 };
-using CollidableSpritePtr = std::shared_ptr<CollidableSprite>;
+using NodePtr = std::shared_ptr<Node>;
 
 /// タイムラインオブジェクトの配列.
 using TimelineList = std::vector<FrameAnimation::TimelinePtr>;
@@ -86,9 +86,9 @@ private:
   Node escortNode;
   std::vector<Sprite> escortList;
 
-  std::vector<CollidableSpritePtr> playerShotList;
-  std::vector<CollidableSpritePtr> enemyShotList;
-  std::vector<CollidableSpritePtr> enemyList;
+  std::vector<NodePtr> playerShotList;
+  std::vector<NodePtr> enemyShotList;
+  std::vector<NodePtr> enemyList;
 };
 
 } // namespace Scene
