@@ -89,6 +89,7 @@ private:
   Node escortNode;
 
   bool gameover = false;
+  std::vector<Sprite> gameoverList;
   int rest = 2;
   std::vector<Sprite> restList;
   int score = 0;

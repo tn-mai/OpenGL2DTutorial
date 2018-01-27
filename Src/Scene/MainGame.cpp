@@ -2,6 +2,7 @@
 * @file MainGame.cpp
 */
 #include "MainGame.h"
+#include "Title.h"
 #include "../Font.h"
 #include "../GLFWEW.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -318,23 +319,29 @@ bool MainGame::Update(Manager& manager, float dt)
 {
   GLFWEW::Window& window = GLFWEW::Window::Instance();
   const GamePad& gamepad = window.GetGamePad();
-  if (gamepad.buttonDown & GamePad::A) {
-    PlayerShot(0, 100, 1);
-  }
-  glm::vec3 vec;
-  if (gamepad.buttons & GamePad::DPAD_LEFT) {
-    vec.x = -1;
-  } else if (gamepad.buttons & GamePad::DPAD_RIGHT) {
-    vec.x = 1;
-  }
-  if (gamepad.buttons & GamePad::DPAD_UP) {
-    vec.y = 1;
-  } else if (gamepad.buttons & GamePad::DPAD_DOWN) {
-    vec.y = -1;
-  }
-  if (vec.x || vec.y) {
-    vec = glm::normalize(vec) * 400.0f * dt;
-    sprite->Position(sprite->Position() + vec);
+  if (!gameover) {
+    if (gamepad.buttonDown & GamePad::A) {
+      PlayerShot(0, 100, 1);
+    }
+    glm::vec3 vec;
+    if (gamepad.buttons & GamePad::DPAD_LEFT) {
+      vec.x = -1;
+    } else if (gamepad.buttons & GamePad::DPAD_RIGHT) {
+      vec.x = 1;
+    }
+    if (gamepad.buttons & GamePad::DPAD_UP) {
+      vec.y = 1;
+    } else if (gamepad.buttons & GamePad::DPAD_DOWN) {
+      vec.y = -1;
+    }
+    if (vec.x || vec.y) {
+      vec = glm::normalize(vec) * 400.0f * dt;
+      sprite->Position(sprite->Position() + vec);
+    }
+  } else {
+    if (gamepad.buttonDown & GamePad::START) {
+      manager.ReplaceScene(std::make_shared<Title>()); // ƒ^ƒCƒgƒ‹‰æ–Ê‚Ö.
+    }
   }
 
   escortNode.Rotation(escortNode.Rotation() + glm::radians(25.0f * dt));
@@ -371,6 +378,7 @@ bool MainGame::Update(Manager& manager, float dt)
     if (lhs->IsDead()) {
       if (restList.empty()) {
         gameover = true;
+        Font::SetTextSprite(*RootNode(), gameoverList, { -32 * 4.5f, 0, 0 }, "GAME OVER", glm::vec4(1, 0.25f, 0.125f, 1));
       } else {
         restList.pop_back();
         lhs->Position(glm::vec3(-300, 0, 0));
