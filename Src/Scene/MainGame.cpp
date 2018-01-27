@@ -370,23 +370,33 @@ bool MainGame::Update(Manager& manager, float dt)
     }
   }
   );
-  DetectCollision(
-    &sprite, &sprite + 1,
-    enemyShotList.begin(), enemyShotList.end(),
-    [this](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
-    lhs->CountervailingHealth(*rhs.get());
-    if (lhs->IsDead()) {
-      if (restList.empty()) {
-        gameover = true;
-        Font::SetTextSprite(*RootNode(), gameoverList, { -32 * 4.5f, 0, 0 }, "GAME OVER", glm::vec4(1, 0.25f, 0.125f, 1));
-      } else {
-        restList.pop_back();
-        lhs->Position(glm::vec3(-300, 0, 0));
-        lhs->Health(1);
+  if (invinsibleTimer > 0) {
+    invinsibleTimer -= dt;
+    if (invinsibleTimer <= 0) {
+      invinsibleTimer = 0;
+      sprite->Color({ 1, 1, 1, 1 });
+    }
+  } else {
+    DetectCollision(
+      &sprite, &sprite + 1,
+      enemyShotList.begin(), enemyShotList.end(),
+      [this](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+      lhs->CountervailingHealth(*rhs.get());
+      if (lhs->IsDead()) {
+        if (restList.empty()) {
+          gameover = true;
+          Font::SetTextSprite(*RootNode(), gameoverList, { -32 * 4.5f, 0, 0 }, "GAME OVER", glm::vec4(1, 0.25f, 0.125f, 1));
+        } else {
+          restList.pop_back();
+          lhs->Position(glm::vec3(-300, 0, 0));
+          lhs->Color({ 1, 1, 1, 0.5f });
+          lhs->Health(1);
+          invinsibleTimer = 2.0f;
+        }
       }
     }
+    );
   }
-  );
 
   int scoreTmp = score;
   for (size_t i = scoreList.size(); i > 0;) {
