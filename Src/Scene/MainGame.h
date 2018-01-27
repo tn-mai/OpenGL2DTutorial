@@ -22,12 +22,7 @@ public:
 
   virtual void Update(glm::f32 dt) override {
     Sprite::Update(dt);
-    glm::mat4 m;
-    if (Parent()) {
-      m = Parent()->Transform();
-    }
-    m *= Transform();
-    const glm::vec2 pos = m * glm::vec4(Position(), 1);
+    const glm::vec2 pos = WorldPosition();
     worldBody.lt = localBody.lt + pos;
     worldBody.rb = localBody.rb + pos;
   }
