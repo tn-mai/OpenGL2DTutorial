@@ -38,6 +38,7 @@ public:
 
   void Position(const glm::vec3& p) { position = p; }
   const glm::vec3& Position() const { return position; }
+  const glm::vec3& WorldPosition() const { return worldPosition; }
   void Scale(const glm::vec2& s) { scale = s; }
   const glm::vec2& Scale() const { return scale; }
   void Rotation(float r) { rotation = r; }
@@ -50,6 +51,7 @@ public:
   const std::vector<Node*>& Children() const { return children; }
 
   void UpdateRecursive(float dt);
+  void UpdateTransform();
 
   void Tweener(const TweenAnimation::AnimatePtr& p) { tweener = p; }
   const TweenAnimation::AnimatePtr& Tweener() const { return tweener; }
@@ -64,6 +66,7 @@ private:
   float rotation = 0; 
 
   glm::mat4x4 transform; ///< ノードの座標変換行列.
+  glm::vec3 worldPosition;
 
   Node* parent = nullptr; ///< 親ノード.
   std::vector<Node*> children; ///< 子ノードのリスト.

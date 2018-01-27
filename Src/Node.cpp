@@ -50,18 +50,26 @@ void Node::RemoveChild(Node* node)
 */
 void Node::UpdateRecursive(float dt)
 {
+  if (tweener) {
+    tweener->Update(*this, dt);
+  }
+  Update(dt);
+  auto tmp = children;
+  for (auto& e : tmp) {
+    e->UpdateRecursive(dt);
+  }
+}
+
+void Node::UpdateTransform()
+{
   glm::mat4x4 parentTransform;
   if (parent) {
     parentTransform = parent->Transform();
   }
   transform = glm::rotate(glm::scale(glm::translate(parentTransform, position), glm::vec3(scale, 1.0f)), rotation, glm::vec3(0, 0, 1));
-
-  if (tweener) {
-    tweener->Update(*this, dt);
-  }
-  Update(dt);
+  worldPosition = transform * glm::vec4(0, 0, 0, 1);
   for (auto& e : children) {
-    e->UpdateRecursive(dt);
+    e->UpdateTransform();
   }
 }
 

@@ -96,6 +96,7 @@ bool Manager::Update(float dt)
     originNode.AddChild(&sprColorFilter);
     dt = 0.0f;
   }
+  originNode.UpdateTransform();
   originNode.UpdateRecursive(dt);
   return true;
 }
