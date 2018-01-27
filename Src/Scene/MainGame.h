@@ -27,6 +27,8 @@ public:
     worldBody.rb = localBody.rb + pos;
   }
   const CollisionRect& Body() const { return worldBody; }
+  int Health() const { return health; }
+  void Health(int n) { health = n; }
   int SubtractHealth(int n) {
     if (health >= n) {
       health -= n;
@@ -86,6 +88,9 @@ private:
   Sprite background;
   Node escortNode;
 
+  bool gameover = false;
+  int rest = 2;
+  std::vector<Sprite> restList;
   int score = 0;
   std::vector<Sprite> scoreList;
 

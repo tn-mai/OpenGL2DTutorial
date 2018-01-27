@@ -236,6 +236,13 @@ bool MainGame::Initialize(Manager& manager)
   AddChild(&boss);
   AddChild(sprite.get());
   Font::SetTextSprite(*RootNode(), scoreList, glm::vec3(-32 * 3, 300 - 32, 0), "000000", glm::vec4(1, 1, 1, 1));
+  restList.resize(rest, Sprite(tex));
+  for (size_t i = 0; i < restList.size(); ++i) {
+    restList[i].Position(glm::vec3(-(400 - 16 - 16 * static_cast<int>(i)), 300 - 16, 0));
+    restList[i].Rectangle({ {0, 0}, {64, 32} });
+    restList[i].Scale({ 0.25f, 0.25f });
+    AddChild(&restList[i]);
+  }
 
   escortNode.Position(glm::vec3(-16, 0, 0));
   escortNode.Name("escortNode");
@@ -359,9 +366,17 @@ bool MainGame::Update(Manager& manager, float dt)
   DetectCollision(
     &sprite, &sprite + 1,
     enemyShotList.begin(), enemyShotList.end(),
-    [](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
-    std::cout << "Hit(" << lhs->Name() << ", " << rhs->Name() << ")" << std::endl;
+    [this](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
     lhs->CountervailingHealth(*rhs.get());
+    if (lhs->IsDead()) {
+      if (restList.empty()) {
+        gameover = true;
+      } else {
+        restList.pop_back();
+        lhs->Position(glm::vec3(-300, 0, 0));
+        lhs->Health(1);
+      }
+    }
   }
   );
 
