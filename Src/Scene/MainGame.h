@@ -74,6 +74,7 @@ public:
 
   void FreeAllDeadSprite();
   void PlayerShot(glm::f32 rot, glm::f32 vel, int atk);
+  void EnemyShot(const Sprite& sprite, glm::f32 vel, int atk);
 
 private:
   TexturePtr tex;

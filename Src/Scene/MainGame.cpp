@@ -37,14 +37,22 @@ private:
 class AimingShot : public TweenAnimation::Tween
 {
 public:
-  AimingShot(MainGame* scene, const Node* target) : scene(scene), target(target) {}
-  virtual void Update(Node& node, glm::f32 elapsed) override {
-//    scene->AddChild();
+  AimingShot(MainGame* scene, const Node* target) : Tween(0, TweenAnimation::EasingType::Linear), scene(scene), target(target) {}
+  virtual void Update(Node& node, glm::f32 elapsed) override
+  {
+    scene->EnemyShot(static_cast<Sprite&>(node), 400, 1);
   }
 
 private:
   MainGame* scene;
   const Node* target = nullptr;
+};
+
+class Wait : public TweenAnimation::Tween
+{
+public:
+  Wait(glm::f32 d) : Tween(d, TweenAnimation::EasingType::Linear) {}
+  virtual void Update(Node&, glm::f32) override {}
 };
 
 
@@ -66,7 +74,25 @@ void MainGame::PlayerShot(glm::f32 rot, glm::f32 vel, int atk)
   tween->Add(std::make_shared<RemoveIfOutOfAraa>(this, Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
   shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
   shot->Rectangle({ {64, 0},{64, 16} });
+  shot->Name("shot(p)");
   playerShotList.push_back(shot);
+  AddChild(shot.get());
+}
+
+void MainGame::EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
+{
+  const glm::vec3 pos = enemy.WorldPosition();
+  auto shot = CollidableSprite::create(tex, pos, { {-4, -4 },{ 8, 8 }  }, atk);
+  const glm::vec3 direction = glm::normalize(sprite.WorldPosition() - pos);
+  const glm::f32 rot = glm::acos(glm::dot(glm::vec3(-1, 0, 0), direction));
+  auto tween = std::make_shared<TweenAnimation::Parallelize>();
+  tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / vel, direction * 2000.0f));
+  tween->Add(std::make_shared<RemoveIfOutOfAraa>(this, Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+  shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+  shot->Rectangle({ {512 - 32 - 16, 0},{16, 16} });
+  shot->Rotation(rot);
+  shot->Name("shot(e)");
+  enemyShotList.push_back(shot);
   AddChild(shot.get());
 }
 
@@ -140,18 +166,24 @@ bool MainGame::Initialize(Manager& manager)
   AddChild(&sprite);
 
   escortNode.Position(glm::vec3(-16, 0, 0));
+  escortNode.Name("escortNode");
   boss.AddChild(&escortNode);
 
   escortList.resize(16, Sprite(tex));
   for (size_t i = 0; i < escortList.size(); ++i) {
     const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / static_cast<float>(escortList.size())), glm::vec3(0, 0, 1));
     const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
+    escortList[i].Name("escort");
     escortList[i].Position(pos);
     escortList[i].Rectangle({ glm::vec2(480, 0), glm::vec2(32, 32) });
     escortNode.AddChild(&escortList[i]);
 
     auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[0]);
     escortList[i].Animator(animator);
+    auto tween = std::make_shared<TweenAnimation::Sequence>();
+    tween->Add(std::make_shared<Wait>(1.0f));
+    tween->Add(std::make_shared<AimingShot>(this, &sprite));
+    escortList[i].Tweener(std::make_shared<TweenAnimation::Animate>(tween));
   }
 
   {
