@@ -36,6 +36,11 @@ public:
     return health;
   }
   void Die() { health = 0; }
+  void CountervailingHealth(CollidableSprite& e) {
+    const auto h0 = health;
+    SubtractHealth(e.health);
+    e.SubtractHealth(h0);
+  }
   bool IsDead() const { return health <= 0; }
 
 private:
@@ -76,11 +81,10 @@ private:
   TexturePtr tex;
   TexturePtr texBg;
   TimelineList timelineList;
-  Sprite sprite;
+  CollidableSpritePtr sprite;
   Sprite boss;
   Sprite background;
   Node escortNode;
-  std::vector<Sprite> escortList;
 
   std::vector<NodePtr> nodeList;
   std::vector<CollidableSpritePtr> playerShotList;

@@ -5,6 +5,7 @@
 #include "../GLFWEW.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
+#include <iostream>
 
 namespace Scene {
 
@@ -66,7 +67,7 @@ std::shared_ptr<CollidableSprite> CollidableSprite::create(const TexturePtr& tex
 
 void MainGame::PlayerShot(glm::f32 rot, glm::f32 vel, int atk)
 {
-  auto shot = CollidableSprite::create(tex, sprite.Position(), { {-32, -8 },{ 64, 16 }  }, 1);
+  auto shot = CollidableSprite::create(tex, sprite->Position(), { {-32, 8 },{ 32, -8 }  }, 1);
   const auto m = glm::rotate(glm::mat4(), glm::radians(rot), glm::vec3(0, 0, 1));
   glm::vec3 velocity = glm::vec4(vel, 0, 0, 1) * m;
   auto tween = std::make_shared<TweenAnimation::Parallelize>();
@@ -82,8 +83,8 @@ void MainGame::PlayerShot(glm::f32 rot, glm::f32 vel, int atk)
 void MainGame::EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
 {
   const glm::vec3 pos = enemy.WorldPosition();
-  auto shot = CollidableSprite::create(tex, pos, { {-4, -4 },{ 8, 8 }  }, atk);
-  const glm::vec3 direction = glm::normalize(sprite.WorldPosition() - pos);
+  auto shot = CollidableSprite::create(tex, pos, { {-4, 4 },{ 4, -4 }  }, atk);
+  const glm::vec3 direction = glm::normalize(sprite->WorldPosition() - pos);
   const glm::f32 rot = glm::acos(glm::dot(glm::vec3(-1, 0, 0), direction));
   auto tween = std::make_shared<TweenAnimation::Parallelize>();
   tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / vel, direction * 2000.0f));
@@ -111,6 +112,57 @@ void MainGame::FreeAllDeadSprite()
   FreeDeadSprite(playerShotList);
   FreeDeadSprite(enemyShotList);
   FreeDeadSprite(enemyList);
+}
+
+/**
+* 衝突状態を調べる.
+*
+* @param lhs 左辺の衝突判定対象.
+* @param rhs 右辺の衝突判定対象.
+*
+* @retval true 衝突している.
+* @retval false 衝突していない.
+*/
+bool IsCollision(const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs)
+{
+  const auto bodyL = lhs->Body();
+  const auto bodyR = rhs->Body();
+  if (bodyL.lt.x < bodyR.rb.x && bodyL.rb.x > bodyR.lt.x) {
+    if (bodyL.lt.y > bodyR.rb.y && bodyL.rb.y < bodyR.lt.y) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+* 衝突判定.
+*
+* @param b0 左辺の衝突判定対象範囲の先頭.
+* @param e0 左辺の衝突判定対象範囲の終端.
+* @param b1 右辺の衝突判定対象範囲の先頭.
+* @param e1 右辺の衝突判定対象範囲の終端.
+* @param solver 衝突を解決する関数オブジェクト.
+*/
+template<typename Itr0, typename Itr1, typename Func>
+void DetectCollision(Itr0 b0, Itr0 e0, Itr1 b1, Itr1 e1, Func solver)
+{
+  for (; b0 != e0; ++b0) {
+    if ((*b0)->IsDead()) {
+      continue;
+    }
+    for (; b1 != e1; ++b1) {
+      if ((*b1)->IsDead()) {
+        continue;
+      }
+      if (IsCollision(*b0, *b1)) {
+        solver(*b0, *b1);
+        if ((*b0)->IsDead()) {
+          break;
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -151,9 +203,10 @@ bool MainGame::Initialize(Manager& manager)
 
   timelineList = InitAnimationData();
 
-  sprite.Texture(tex);
-  sprite.Rectangle({ glm::vec2(0 ,0), glm::vec2(64, 32) });
-  sprite.Name("player");
+  sprite = CollidableSprite::create(tex, glm::vec3(), { {-16, 8},{ 16, -8} });
+  sprite->Texture(tex);
+  sprite->Rectangle({ glm::vec2(0 ,0), glm::vec2(64, 32) });
+  sprite->Name("player");
 
   boss.Texture(tex);
   boss.Rectangle({ glm::vec2(320 ,128), glm::vec2(128, 256) });
@@ -165,27 +218,26 @@ bool MainGame::Initialize(Manager& manager)
 
   AddChild(&background);
   AddChild(&boss);
-  AddChild(&sprite);
+  AddChild(sprite.get());
 
   escortNode.Position(glm::vec3(-16, 0, 0));
   escortNode.Name("escortNode");
   boss.AddChild(&escortNode);
 
-  escortList.resize(16, Sprite(tex));
-  for (size_t i = 0; i < escortList.size(); ++i) {
-    const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / static_cast<float>(escortList.size())), glm::vec3(0, 0, 1));
+  for (size_t i = 0; i < 16; ++i) {
+    const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / 16.0f), glm::vec3(0, 0, 1));
     const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
-    escortList[i].Name("escort");
-    escortList[i].Position(pos);
-    escortList[i].Rectangle({ glm::vec2(480, 0), glm::vec2(32, 32) });
-    escortNode.AddChild(&escortList[i]);
+    CollidableSpritePtr escort = CollidableSprite::create(tex, pos, { {-12, 12}, {12, -12} }, 10);
+    escort->Name("escort");
+    escortNode.AddChild(escort.get());
 
     auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[0]);
-    escortList[i].Animator(animator);
+    escort->Animator(animator);
     auto tween = std::make_shared<TweenAnimation::Sequence>();
     tween->Add(std::make_shared<Wait>(1.0f));
-    tween->Add(std::make_shared<AimingShot>(this, &sprite));
-    escortList[i].Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+    tween->Add(std::make_shared<AimingShot>(this, sprite.get()));
+    escort->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+    enemyList.push_back(escort);
   }
 
   {
@@ -258,13 +310,29 @@ bool MainGame::Update(Manager& manager, float dt)
   }
   if (vec.x || vec.y) {
     vec = glm::normalize(vec) * 400.0f * dt;
-    sprite.Position(sprite.Position() + vec);
+    sprite->Position(sprite->Position() + vec);
   }
 
   escortNode.Rotation(escortNode.Rotation() + glm::radians(25.0f * dt));
   for (auto e : escortNode.Children()) {
     e->Rotation(-escortNode.Rotation());
   }
+
+  DetectCollision(
+    playerShotList.begin(), playerShotList.end(),
+    enemyList.begin(), enemyList.end(),
+    [](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+    lhs->CountervailingHealth(*rhs.get());
+  }
+  );
+  DetectCollision(
+    &sprite, &sprite + 1,
+    enemyShotList.begin(), enemyShotList.end(),
+    [](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+    std::cout << "Hit(" << lhs->Name() << ", " << rhs->Name() << ")" << std::endl;
+    lhs->CountervailingHealth(*rhs.get());
+  }
+  );
 
   FreeAllDeadSprite();
 
