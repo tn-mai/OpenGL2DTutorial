@@ -57,6 +57,17 @@ public:
   virtual void Update(Node&, glm::f32) override {}
 };
 
+class RemoveFromParent : public TweenAnimation::Tween
+{
+public:
+  virtual void Update(Node& node, glm::f32 elapsed) override
+  {
+    if (node.Parent()) {
+      node.Parent()->RemoveChild(&node);
+    }
+  }
+};
+
 
 std::shared_ptr<CollidableSprite> CollidableSprite::create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)
 {
@@ -331,6 +342,15 @@ bool MainGame::Update(Manager& manager, float dt)
     lhs->CountervailingHealth(*rhs.get());
     if (rhs->IsDead()) {
       score += 500;
+      auto p = std::make_shared<Sprite>(tex);
+      p->Rectangle({ {512 - 96, 64 }, { 32, 32} });
+      p->Position(rhs->WorldPosition());
+      auto tween = std::make_shared<TweenAnimation::Sequence>();
+      tween->Add(std::make_shared<Wait>(0.5f));
+      tween->Add(std::make_shared<RemoveFromParent>());
+      p->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+      nodeList.push_back(p);
+      AddChild(p.get());
     } else {
       score += 10;
     }
