@@ -216,9 +216,10 @@ bool MainGame::Update(Manager& manager, float dt)
     }
   }
  
-  const auto AddBlastSprite = [this](const glm::vec3& worldPosition) {
+  const auto AddBlastSprite = [this](const glm::vec3& worldPosition, glm::f32 scale = 1) {
     auto p = std::make_shared<Sprite>(tex);
     p->Position(worldPosition);
+    p->Scale(glm::vec2(scale));
     auto tween = std::make_shared<TweenAnimation::Sequence>();
     tween->Add(std::make_shared<TweenAnimation::Wait>(0.5f));
     tween->Add(std::make_shared<TweenAnimation::RemoveFromParent>());
@@ -250,6 +251,7 @@ bool MainGame::Update(Manager& manager, float dt)
         AddBlastSprite(e->WorldPosition());
       }
     }
+    AddBlastSprite(boss->WorldPosition(), 5);
     boss.reset();
     eventTimer = 2;
   }
@@ -258,7 +260,7 @@ bool MainGame::Update(Manager& manager, float dt)
     const auto DestroyPlayer = [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
       lhs->CountervailingHealth(*rhs.get());
       if (lhs->IsDead()) {
-        AddBlastSprite(lhs->WorldPosition());
+        AddBlastSprite(lhs->WorldPosition(), 2);
         if (restList.empty()) {
           sprite->GameOver(true);
           eventTimer = 2;
