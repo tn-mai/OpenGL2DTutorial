@@ -3,6 +3,7 @@
 */
 #include "MainGame.h"
 #include "Title.h"
+#include "../Character/Boss.h"
 #include "../Font.h"
 #include "../GLFWEW.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -10,66 +11,6 @@
 #include <iostream>
 
 namespace Scene {
-
-class MoveByVelocity : public TweenAnimation::Tween {
-public:
-  MoveByVelocity(const glm::vec3& v) : Tween(100, TweenAnimation::EasingType::Linear), velocity(v) {}
-  virtual void Update(Node& node, glm::f32 dt) override {
-    node.Position(node.Position() + velocity * dt);
-  }
-private:
-  glm::vec3 velocity;
-};
-
-class AimingShot : public TweenAnimation::Tween
-{
-public:
-  AimingShot(MainGame* scene, const Node* target) : Tween(0, TweenAnimation::EasingType::Linear), scene(scene), target(target) {}
-  virtual void Update(Node& node, glm::f32 elapsed) override
-  {
-    scene->EnemyShot(static_cast<Sprite&>(node), 400, 1);
-  }
-
-private:
-  MainGame* scene;
-  const Node* target = nullptr;
-};
-
-class Wait : public TweenAnimation::Tween
-{
-public:
-  Wait(glm::f32 d) : Tween(d, TweenAnimation::EasingType::Linear) {}
-  virtual void Update(Node&, glm::f32) override {}
-};
-
-class RemoveFromParent : public TweenAnimation::Tween
-{
-public:
-  virtual void Update(Node& node, glm::f32 elapsed) override
-  {
-    if (node.Parent()) {
-      node.Parent()->RemoveChild(&node);
-    }
-  }
-};
-
-
-void MainGame::EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
-{
-  const glm::vec3 pos = enemy.WorldPosition();
-  auto shot = Character::CollidableSprite::create(tex, pos, { {-4, 4 },{ 4, -4 }  }, atk);
-  const glm::vec3 direction = glm::normalize(sprite->WorldPosition() - pos);
-  const glm::f32 rot = glm::acos(glm::dot(glm::vec3(-1, 0, 0), direction));
-  auto tween = std::make_shared<TweenAnimation::Parallelize>();
-  tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / vel, direction * 2000.0f));
-  tween->Add(std::make_shared<Character::RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
-  shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
-  shot->Rectangle({ {512 - 32 - 16, 0},{16, 16} });
-  shot->Rotation(rot);
-  shot->Name("shot(e)");
-  enemyShotList.push_back(shot);
-  AddChild(shot.get());
-}
 
 void FreeDeadSprite(std::vector<Character::CollidableSpritePtr>& targetList)
 {
@@ -202,17 +143,14 @@ bool MainGame::Initialize(Manager& manager)
   timelineList = InitAnimationData();
 
   sprite = Character::Player::Create(tex);
-
-  boss.Texture(tex);
-  boss.Rectangle({ glm::vec2(320 ,128), glm::vec2(128, 256) });
-  boss.Position(glm::vec3(256, 0, 0));
-  boss.Name("boss");
+  Character::BossPtr boss = std::make_shared<Character::Boss>(tex, sprite, enemyList, enemyShotList, timelineList);
+  enemyList.push_back(boss);
 
   background.Texture(texBg);
   background.Name("bg");
 
   AddChild(&background);
-  AddChild(&boss);
+  AddChild(boss.get());
   AddChild(sprite.get());
   Font::SetTextSprite(*RootNode(), scoreList, glm::vec3(-32 * 3, 300 - 32, 0), "000000", glm::vec4(1, 1, 1, 1));
   restList.resize(rest, Sprite(tex));
@@ -223,64 +161,6 @@ bool MainGame::Initialize(Manager& manager)
     AddChild(&restList[i]);
   }
 
-  escortNode.Position(glm::vec3(-16, 0, 0));
-  escortNode.Name("escortNode");
-  boss.AddChild(&escortNode);
-
-  for (size_t i = 0; i < 16; ++i) {
-    const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / 16.0f), glm::vec3(0, 0, 1));
-    const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
-    CollidableSpritePtr escort = Character::CollidableSprite::create(tex, pos, { {-12, 12}, {12, -12} }, 10);
-    escort->Name("escort");
-    escortNode.AddChild(escort.get());
-
-    auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[AnimeId_Enemy_Escort]);
-    escort->Animator(animator);
-    auto tween = std::make_shared<TweenAnimation::Sequence>();
-    tween->Add(std::make_shared<Wait>(1.0f));
-    tween->Add(std::make_shared<AimingShot>(this, sprite.get()));
-    escort->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
-    enemyList.push_back(escort);
-  }
-
-  {
-    namespace TA = TweenAnimation;
-#if 1
-    auto moveBoss0 = std::make_shared<TA::MoveBy>(1.5f, glm::vec3(0, -150, 0));
-    moveBoss0->Easing(TA::EasingType::EaseOut);
-    auto moveBoss1 = std::make_shared<TA::MoveBy>(3.0f, glm::vec3(0, 300, 0));
-    moveBoss1->Easing(TA::EasingType::EaseInOut);
-    auto moveBoss2 = std::make_shared<TA::MoveBy>(1.5f, glm::vec3(0, -150, 0));
-    moveBoss2->Easing(TA::EasingType::EaseIn);
-    auto seqBoss = std::make_shared<TA::Sequence>();
-    seqBoss->Add(moveBoss0);
-    seqBoss->Add(moveBoss1);
-    seqBoss->Add(moveBoss2);
-    TA::AnimatePtr tweenBoss = std::make_shared<TA::Animate>(seqBoss);
-#else
-    auto moveBossY0 = std::make_shared<TA::MoveBy>(1.5f, glm::vec3(0, 150, 0), TA::EasingType::EaseOut, TA::Target::Y);
-    auto moveBossY1 = std::make_shared<TA::MoveBy>(3.0f, glm::vec3(0, -300, 0), TA::EasingType::EaseInOut, TA::Target::Y);
-    auto moveBossY2 = std::make_shared<TA::MoveBy>(1.5f, glm::vec3(0, 150, 0), TA::EasingType::EaseIn, TA::Target::Y);
-
-    auto moveBossX0 = std::make_shared<TA::MoveBy>(0.75f, glm::vec3(-50, 0, 0), TA::EasingType::EaseOut, TA::Target::X);
-    auto moveBossX1 = std::make_shared<TA::MoveBy>(1.5f, glm::vec3(100, 0, 0), TA::EasingType::EaseInOut, TA::Target::X);
-    auto moveBossX2 = std::make_shared<TA::MoveBy>(0.75f, glm::vec3(-50, 0, 0), TA::EasingType::EaseIn, TA::Target::X);
-
-    auto seqBossY = std::make_shared<TA::Sequence>(50);
-    seqBossY->Add(moveBossY0);
-    seqBossY->Add(moveBossY1);
-    seqBossY->Add(moveBossY2);
-    auto seqBossX = std::make_shared<TA::Sequence>(100);
-    seqBossX->Add(moveBossX0);
-    seqBossX->Add(moveBossX1);
-    seqBossX->Add(moveBossX2);
-    auto palBoss = std::make_shared<TA::Parallelize>();
-    palBoss->Add(seqBossX);
-    palBoss->Add(seqBossY);
-    TA::AnimatePtr tweenBoss = std::make_shared<TA::Animate>(palBoss);
-#endif
-    boss.Tweener(tweenBoss);
-  }
   return true;
 }
 
@@ -309,17 +189,12 @@ bool MainGame::Update(Manager& manager, float dt)
     }
   }
 
-  escortNode.Rotation(escortNode.Rotation() + glm::radians(25.0f * dt));
-  for (auto e : escortNode.Children()) {
-    e->Rotation(-escortNode.Rotation());
-  }
-
   const auto AddBlastSprite = [this](const CollidableSpritePtr& target) {
     auto p = std::make_shared<Sprite>(tex);
     p->Position(target->WorldPosition());
     auto tween = std::make_shared<TweenAnimation::Sequence>();
-    tween->Add(std::make_shared<Wait>(0.5f));
-    tween->Add(std::make_shared<RemoveFromParent>());
+    tween->Add(std::make_shared<TweenAnimation::Wait>(0.5f));
+    tween->Add(std::make_shared<TweenAnimation::RemoveFromParent>());
     p->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
     p->Animator(std::make_shared<FrameAnimation::Animate>(timelineList[AnimeId_Blast]));
     nodeList.push_back(p);

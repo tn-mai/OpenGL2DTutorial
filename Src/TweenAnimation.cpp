@@ -237,4 +237,20 @@ void Parallelize::Update(Node& node, glm::f32 elapsed)
   }
 }
 
+void RemoveFromParent::Update(Node& node, glm::f32 elapsed)
+{
+  if (node.Parent()) {
+    node.Parent()->RemoveChild(&node);
+  }
+}
+
+void Rotation::Initialize(Node& node)
+{
+  start = node.Rotation();
+}
+
+void Rotation::Update(Node& node, glm::f32 dt)
+{
+  node.Rotation(start + rotation * dt);
+}
 } // namespace TweenAnimation

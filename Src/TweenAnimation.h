@@ -172,6 +172,43 @@ private:
   std::vector<TweenPtr> tweens;
 };
 
+/**
+* 指定された期間何もしない.
+*/
+class Wait : public TweenAnimation::Tween
+{
+public:
+  Wait(glm::f32 d) : Tween(d, TweenAnimation::EasingType::Linear) {}
+  virtual void Update(Node&, glm::f32) override {}
+};
+
+/**
+* 親ノードから削除.
+*/
+class RemoveFromParent : public TweenAnimation::Tween
+{
+public:
+  virtual void Update(Node& node, glm::f32 elapsed) override;
+};
+
+/**
+* 回転アニメーション.
+*/
+class Rotation : public Tween
+{
+public:
+  Rotation(glm::f32 d, glm::f32 rot, EasingType e = EasingType::Linear) :
+    Tween(d, e),
+    rotation(rot)
+  {}
+  virtual void Initialize(Node& node) override;
+  virtual void Update(Node& node, glm::f32 dt) override;
+
+private:
+  glm::f32 start;
+  glm::f32 rotation;
+};
+
 } // namespace TweenAnimation
 
 #endif // TWEENANIMATION_H_INCLUDED

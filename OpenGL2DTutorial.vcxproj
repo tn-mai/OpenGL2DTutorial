@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Character\Boss.cpp" />
     <ClCompile Include="Src\Character\Character.cpp" />
     <ClCompile Include="Src\Character\Player.cpp" />
     <ClCompile Include="Src\Font.cpp" />
@@ -144,6 +145,7 @@
     <None Include="Res\Tutorial.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Character\Boss.h" />
     <ClInclude Include="Src\Character\Character.h" />
     <ClInclude Include="Src\Character\Player.h" />
     <ClInclude Include="Src\Font.h" />

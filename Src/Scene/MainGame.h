@@ -34,9 +34,7 @@ private:
   TexturePtr texBg;
   TimelineList timelineList;
   Character::PlayerPtr sprite;
-  Sprite boss;
   Sprite background;
-  Node escortNode;
 
   float gameoverTimer = 2;
   std::vector<Sprite> gameoverList;
