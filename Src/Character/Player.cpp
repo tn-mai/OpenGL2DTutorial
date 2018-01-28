@@ -107,7 +107,10 @@ void Player::Update(glm::f32 dt)
     }
     if (vec.x || vec.y) {
       vec = glm::normalize(vec) * 400.0f * dt;
-      Position(Position() + vec);
+      glm::vec3 pos = Position() + vec;
+      pos.x = glm::clamp(pos.x, -400.0f + 32.0f, 400.0f - 32.0f);
+      pos.y = glm::clamp(pos.y, -300.0f + 16.0f, 300.0f - 16.0f);
+      Position(pos);
     }
   }
   RemoveDeadShot();
