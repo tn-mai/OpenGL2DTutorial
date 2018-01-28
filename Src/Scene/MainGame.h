@@ -5,7 +5,7 @@
 #define SCENE_MAINGAME_H_INCLUDED
 #include "../Scene.h"
 #include "../Sprite.h"
-#include "../Character/Character.h"
+#include "../Character/Player.h"
 #include <memory>
 
 namespace Scene {
@@ -24,7 +24,6 @@ public:
   virtual void Finalize(Manager& manager) override;
 
   void FreeAllDeadSprite();
-  void PlayerShot(glm::f32 rot, glm::f32 vel, int atk);
   void EnemyShot(const Sprite& sprite, glm::f32 vel, int atk);
 
 private:
@@ -34,14 +33,11 @@ private:
   TexturePtr tex;
   TexturePtr texBg;
   TimelineList timelineList;
-  Character::CollidableSpritePtr sprite;
+  Character::PlayerPtr sprite;
   Sprite boss;
   Sprite background;
   Node escortNode;
 
-  float invinsibleTimer = 2;
-  bool controllable = true;
-  bool gameover = false;
   float gameoverTimer = 2;
   std::vector<Sprite> gameoverList;
   int rest = 2;
@@ -50,7 +46,6 @@ private:
   std::vector<Sprite> scoreList;
 
   std::vector<NodePtr> nodeList;
-  std::vector<CollidableSpritePtr> playerShotList;
   std::vector<CollidableSpritePtr> enemyShotList;
   std::vector<CollidableSpritePtr> enemyList;
 };

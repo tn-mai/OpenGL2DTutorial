@@ -40,6 +40,17 @@ private:
 using NodePtr = std::shared_ptr<Node>;
 using CollidableSpritePtr = std::shared_ptr<CollidableSprite>;
 
+/**
+* ”ÍˆÍŠO‚Éo‚½‚çE‚·.
+*/
+class RemoveIfOutOfArea : public TweenAnimation::Tween {
+public:
+  RemoveIfOutOfArea(const Rect& r);
+  virtual void Update(Node& node, glm::f32 dt) override;
+private:
+  Rect area;
+};
+
 } // namespace Character
 
 #endif // CHARACTER_CHARACTER_H_INCLUDED

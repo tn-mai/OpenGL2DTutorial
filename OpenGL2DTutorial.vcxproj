@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Character\Character.cpp" />
+    <ClCompile Include="Src\Character\Player.cpp" />
     <ClCompile Include="Src\Font.cpp" />
     <ClCompile Include="Src\FrameAnimation.cpp" />
     <ClCompile Include="Src\GLFWEW.cpp" />
@@ -144,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Character\Character.h" />
+    <ClInclude Include="Src\Character\Player.h" />
     <ClInclude Include="Src\Font.h" />
     <ClInclude Include="Src\FrameAnimation.h" />
     <ClInclude Include="Src\DXGIFormat.h" />

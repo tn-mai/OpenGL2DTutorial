@@ -21,22 +21,6 @@ private:
   glm::vec3 velocity;
 };
 
-class RemoveIfOutOfAraa : public TweenAnimation::Tween {
-public:
-  RemoveIfOutOfAraa(MainGame* scene, const Rect& r) : Tween(100, TweenAnimation::EasingType::Linear), scene(scene), area(r) {}
-  virtual void Update(Node& node, glm::f32 dt) override {
-    const glm::vec3 pos = node.Position();
-    if (pos.x < area.origin.x || pos.x > area.origin.x + area.size.x ||
-      pos.y < area.origin.y || pos.y > area.origin.y + area.size.y) {
-      static_cast<Character::CollidableSprite&>(node).Die();
-    }
-  }
-
-private:
-  MainGame *scene;
-  Rect area;
-};
-
 class AimingShot : public TweenAnimation::Tween
 {
 public:
@@ -70,21 +54,6 @@ public:
 };
 
 
-void MainGame::PlayerShot(glm::f32 rot, glm::f32 vel, int atk)
-{
-  auto shot = Character::CollidableSprite::create(tex, sprite->Position(), { {-32, 8 },{ 32, -8 }  }, 1);
-  const auto m = glm::rotate(glm::mat4(), glm::radians(rot), glm::vec3(0, 0, 1));
-  glm::vec3 velocity = glm::vec4(vel, 0, 0, 1) * m;
-  auto tween = std::make_shared<TweenAnimation::Parallelize>();
-  tween->Add(std::make_shared<TweenAnimation::MoveBy>(0.5f, glm::vec3(800, 0, 0)));
-  tween->Add(std::make_shared<RemoveIfOutOfAraa>(this, Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
-  shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
-  shot->Rectangle({ {64, 0},{64, 16} });
-  shot->Name("shot(p)");
-  playerShotList.push_back(shot);
-  AddChild(shot.get());
-}
-
 void MainGame::EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
 {
   const glm::vec3 pos = enemy.WorldPosition();
@@ -93,7 +62,7 @@ void MainGame::EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
   const glm::f32 rot = glm::acos(glm::dot(glm::vec3(-1, 0, 0), direction));
   auto tween = std::make_shared<TweenAnimation::Parallelize>();
   tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / vel, direction * 2000.0f));
-  tween->Add(std::make_shared<RemoveIfOutOfAraa>(this, Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+  tween->Add(std::make_shared<Character::RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
   shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
   shot->Rectangle({ {512 - 32 - 16, 0},{16, 16} });
   shot->Rotation(rot);
@@ -114,7 +83,6 @@ void FreeDeadSprite(std::vector<Character::CollidableSpritePtr>& targetList)
 void MainGame::FreeAllDeadSprite()
 {
   nodeList.erase(std::remove_if(nodeList.begin(), nodeList.end(), [](const NodePtr& p) {return !p->Parent(); }), nodeList.end());
-  FreeDeadSprite(playerShotList);
   FreeDeadSprite(enemyShotList);
   FreeDeadSprite(enemyList);
 }
@@ -233,10 +201,7 @@ bool MainGame::Initialize(Manager& manager)
 
   timelineList = InitAnimationData();
 
-  sprite = Character::CollidableSprite::create(tex, glm::vec3(), { {-16, 8},{ 16, -8} });
-  sprite->Texture(tex);
-  sprite->Rectangle({ glm::vec2(0 ,0), glm::vec2(64, 32) });
-  sprite->Name("player");
+  sprite = Character::Player::Create(tex);
 
   boss.Texture(tex);
   boss.Rectangle({ glm::vec2(320 ,128), glm::vec2(128, 256) });
@@ -332,26 +297,7 @@ bool MainGame::Update(Manager& manager, float dt)
 {
   GLFWEW::Window& window = GLFWEW::Window::Instance();
   const GamePad& gamepad = window.GetGamePad();
-  if (!gameover && controllable) {
-    if (gamepad.buttonDown & GamePad::A) {
-      PlayerShot(0, 100, 1);
-    }
-    glm::vec3 vec;
-    if (gamepad.buttons & GamePad::DPAD_LEFT) {
-      vec.x = -1;
-    } else if (gamepad.buttons & GamePad::DPAD_RIGHT) {
-      vec.x = 1;
-    }
-    if (gamepad.buttons & GamePad::DPAD_UP) {
-      vec.y = 1;
-    } else if (gamepad.buttons & GamePad::DPAD_DOWN) {
-      vec.y = -1;
-    }
-    if (vec.x || vec.y) {
-      vec = glm::normalize(vec) * 400.0f * dt;
-      sprite->Position(sprite->Position() + vec);
-    }
-  } else if (gameover) {
+  if (sprite->GameOver()) {
     if (gameoverTimer > 0) {
       gameoverTimer -= dt;
       if (gameoverTimer <= 0) {
@@ -381,7 +327,7 @@ bool MainGame::Update(Manager& manager, float dt)
   };
 
   DetectCollision(
-    playerShotList.begin(), playerShotList.end(),
+    sprite->ShotList().begin(), sprite->ShotList().end(),
     enemyList.begin(), enemyList.end(),
     [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
     lhs->CountervailingHealth(*rhs.get());
@@ -394,34 +340,16 @@ bool MainGame::Update(Manager& manager, float dt)
   }
   );
 
-  if (invinsibleTimer > 2) {
-    invinsibleTimer -= dt;
-    if (invinsibleTimer <= 2) {
-      sprite->Position(glm::vec3(-300, 0, 0));
-      sprite->Color({ 1, 1, 1, 0.5f });
-      sprite->Health(1);
-      controllable = true;
-    }
-  } else if (invinsibleTimer > 0) {
-    invinsibleTimer -= dt;
-    if (invinsibleTimer <= 0) {
-      invinsibleTimer = 0;
-      sprite->Color({ 1, 1, 1, 1 });
-      controllable = true;
-    }
-  } else {
+  if (!sprite->Invinsible()) {
     const auto DestroyPlayer = [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
       lhs->CountervailingHealth(*rhs.get());
       if (lhs->IsDead()) {
-        controllable = false;
-        lhs->Color({ 1, 1, 1, 0 });
         AddBlastSprite(lhs);
         if (restList.empty()) {
-          gameover = true;
+          sprite->GameOver(true);
           gameoverTimer = 2;
         } else {
           restList.pop_back();
-          invinsibleTimer = 3.0f;
         }
       }
     };
