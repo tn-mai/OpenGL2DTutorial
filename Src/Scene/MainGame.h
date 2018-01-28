@@ -8,6 +8,7 @@
 #include "../Character/Player.h"
 #include "../Character/Boss.h"
 #include <memory>
+#include <random>
 
 namespace Scene {
 
@@ -37,6 +38,7 @@ private:
   Character::PlayerPtr sprite;
   Character::BossPtr boss;
   Sprite background;
+  std::vector<Sprite> bgStarList;
 
   float eventTimer = 2;
   std::vector<Sprite> eventTextList;
@@ -48,6 +50,8 @@ private:
   std::vector<NodePtr> nodeList;
   std::vector<CollidableSpritePtr> enemyShotList;
   std::vector<CollidableSpritePtr> enemyList;
+
+  std::mt19937 random;
 };
 
 } // namespace Scene

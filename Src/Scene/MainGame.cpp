@@ -150,6 +150,24 @@ bool MainGame::Initialize(Manager& manager)
   background.Name("bg");
 
   AddChild(&background);
+
+  bgStarList.resize(32, Sprite(tex));
+  for (auto& e : bgStarList) {
+    e.Name("bg-star");
+    std::uniform_real_distribution<float> distX(-400, 400);
+    std::uniform_real_distribution<float> distY(-300, 300);
+    std::uniform_int_distribution<> time(0, 2);
+    std::uniform_int_distribution<> color(1, 7);
+    e.Position(glm::vec3(distX(random), distY(random), 0));
+    const int colorBit = color(random);
+    e.Color(glm::vec4((colorBit & 1), (colorBit & 2) >> 1, (colorBit & 4) >> 2, 1));
+    e.Rectangle({ {512 - 8, 512 - 8}, { 8, 8} });
+    auto tween = std::make_shared<TweenAnimation::MoveBy>(6.0f + static_cast<float>(time(random)) * 4.0f, glm::vec3(-1000.0f, 0, 0));
+    e.Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+    e.Tweener()->Loop(false);
+    AddChild(&e);
+  }
+
   AddChild(boss.get());
   AddChild(sprite.get());
   Font::SetTextSprite(*RootNode(), scoreList, glm::vec3(-32 * 3, 300 - 32, 0), "000000", glm::vec4(1, 1, 1, 1));
@@ -272,6 +290,22 @@ bool MainGame::Update(Manager& manager, float dt)
 
     DetectCollision(&sprite, &sprite + 1, enemyShotList.begin(), enemyShotList.end(), DestroyPlayer);
     DetectCollision(&sprite, &sprite + 1, enemyList.begin(), enemyList.end(), DestroyPlayer);
+  }
+
+  for (auto& e : bgStarList) {
+    if (e.Position().x > -408) {
+      continue;
+    }
+    std::uniform_real_distribution<float> distY(-300, 300);
+    std::uniform_int_distribution<> time(0, 2);
+    std::uniform_int_distribution<> color(1, 7);
+    const int colorBit = color(random);
+    e.Color(glm::vec4((colorBit & 1), (colorBit & 2) >> 1, (colorBit & 4) >> 2, 1));
+    e.Position(glm::vec3(408, distY(random), 0));
+    e.Rectangle({ {512 - 8, 512 - 8}, { 8, 8} });
+    auto tween = std::make_shared<TweenAnimation::MoveBy>(6.0f + static_cast<float>(time(random)) * 4.0f, glm::vec3(-1000.0f, 0, 0));
+    e.Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+    e.Tweener()->Loop(false);
   }
 
   int scoreTmp = score;
