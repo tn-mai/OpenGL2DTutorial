@@ -47,9 +47,38 @@ private:
   NodePtr target;
 };
 
-void EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
+class BossShot : public TweenAnimation::Tween
 {
-}
+public:
+  BossShot() : Tween(0, TweenAnimation::EasingType::Linear) {}
+  virtual void Update(Node& node, glm::f32 elapsed) override
+  {
+    Boss& boss = static_cast<Boss&>(node);
+    if (boss.Health() >= 50) {
+      return;
+    }
+    const glm::vec3 pos = boss.WorldPosition();
+    for (glm::f32 d = 0; d < 360.0f; d += 360.0f / 16.0f) {
+      auto shot = Character::CollidableSprite::create(boss.Texture(), pos, { {-2, 2 },{ 2, -2 } }, 2);
+      const glm::f32 rot = glm::radians(degree + d);
+      const glm::vec3 direction = glm::rotate(glm::mat4(), rot, glm::vec3(0, 0, 1)) * glm::vec4(-1, 0, 0, 1);
+      const glm::f32 velocity = 100.0f;
+      auto tween = std::make_shared<TweenAnimation::Parallelize>();
+      tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / velocity, direction * 2000.0f));
+      tween->Add(std::make_shared<Character::RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+      shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+      shot->Rectangle({ {512 - 32 - 16 - 16, 0},{16, 16} });
+      shot->Name("shot(boss)");
+      boss.Shot(shot);
+    }
+    degree += 360.0f / 64.0f;
+    if (degree >= 360.0f) {
+      degree -= 360.0f;
+    }
+  }
+private:
+  glm::f32 degree = 0;
+};
 
 /**
 * コンストラクタ.
@@ -80,10 +109,7 @@ Boss::Boss(
   for (size_t i = 0; i < 16; ++i) {
     const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / 16.0f), glm::vec3(0, 0, 1));
     const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
-    CollidableSpritePtr escort = std::make_shared<Escort>(tex, pos, [&](const CollidableSpritePtr& shot) {
-      enemyShotList.push_back(shot);
-      Parent()->AddChild(shot.get());
-    });
+    CollidableSpritePtr escort = std::make_shared<Escort>(tex, pos, [this](const CollidableSpritePtr& shot) { Shot(shot); });
     escort->Name("escort");
     auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[0]);
     escort->Animator(animator);
@@ -111,7 +137,13 @@ Boss::Boss(
     seqBoss->Add(moveBoss0);
     seqBoss->Add(moveBoss1);
     seqBoss->Add(moveBoss2);
-    TA::AnimatePtr tweenBoss = std::make_shared<TA::Animate>(seqBoss);
+    auto seqShot = std::make_shared<TA::Sequence>();
+    seqShot->Add(std::make_shared<TA::Wait>(0.5f));
+    seqShot->Add(std::make_shared<BossShot>());
+    auto palBoss = std::make_shared<TA::Parallelize>();
+    palBoss->Add(seqBoss);
+    palBoss->Add(seqShot);
+    TA::AnimatePtr tweenBoss = std::make_shared<TA::Animate>(palBoss);
 #else
     auto moveBossY0 = std::make_shared<TA::MoveBy>(1.5f, glm::vec3(0, 150, 0), TA::EasingType::EaseOut, TA::Target::Y);
     auto moveBossY1 = std::make_shared<TA::MoveBy>(3.0f, glm::vec3(0, -300, 0), TA::EasingType::EaseInOut, TA::Target::Y);
