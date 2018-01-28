@@ -52,6 +52,7 @@ void SetTextSprite(Node& node, std::vector<Sprite>& v, glm::vec3 offset, const c
       v.push_back(Sprite(texFont));
       v.back().Position(offset);
       v.back().Color(color);
+      v.back().Name(text);
       SetChar(v.back(), *text);
       node.AddChild(&v.back());
     }
