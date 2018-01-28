@@ -143,7 +143,7 @@ bool MainGame::Initialize(Manager& manager)
   timelineList = InitAnimationData();
 
   sprite = Character::Player::Create(tex);
-  Character::BossPtr boss = std::make_shared<Character::Boss>(tex, sprite, enemyList, enemyShotList, timelineList);
+  boss = std::make_shared<Character::Boss>(tex, sprite, enemyList, enemyShotList, timelineList);
   enemyList.push_back(boss);
 
   background.Texture(texBg);
@@ -158,6 +158,7 @@ bool MainGame::Initialize(Manager& manager)
     restList[i].Position(glm::vec3(-(400 - 16 - 16 * static_cast<int>(i)), 300 - 16, 0));
     restList[i].Rectangle({ {0, 0}, {64, 32} });
     restList[i].Scale({ 0.25f, 0.25f });
+    restList[i].Name("rest");
     AddChild(&restList[i]);
   }
 
@@ -177,21 +178,47 @@ bool MainGame::Update(Manager& manager, float dt)
 {
   GLFWEW::Window& window = GLFWEW::Window::Instance();
   const GamePad& gamepad = window.GetGamePad();
-  if (sprite->GameOver()) {
-    if (gameoverTimer > 0) {
-      gameoverTimer -= dt;
-      if (gameoverTimer <= 0) {
-        gameoverTimer = 0;
-        Font::SetTextSprite(*RootNode(), gameoverList, { -32 * 4.5f, 0, 0 }, "GAME OVER", glm::vec4(1, 0.25f, 0.125f, 1));
+  if (sprite->GameClear()) {
+    if (eventTimer > 0) {
+      eventTimer -= dt;
+      if (eventTimer <= 0) {
+        eventTimer = 0;
+        static const char* const text[] = {
+          "CONGRATURATION",
+          "",
+          "THANKS TO YOUR BRAVE",
+          "FIGHTING. THE SOLAR",
+          "SYSTEM RESTORED PEACE.",
+          "YOUR NAME WILL REMAIN",
+          "FOREVER..."
+        };
+        float y = 192;
+        eventTextList.reserve(256);
+        for (auto e : text) {
+          const float halfLen = static_cast<float>(std::strlen(e)) * 0.5f;
+          Font::SetTextSprite(*RootNode(), eventTextList, { -32 * halfLen + 3, y - 4, 0 }, e, glm::vec4(0, 0, 0, 0.75f));
+          Font::SetTextSprite(*RootNode(), eventTextList, { -32 * halfLen, y, 0 }, e, glm::vec4(0.125f, 0.25f, 1, 1));
+          y -= 64;
+        }
+      }
+    } else if (gamepad.buttonDown & GamePad::START) {
+      manager.ReplaceScene(std::make_shared<Title>()); // タイトル画面へ.
+    }
+  } else if (sprite->GameOver()) {
+    if (eventTimer > 0) {
+      eventTimer -= dt;
+      if (eventTimer <= 0) {
+        eventTimer = 0;
+        Font::SetTextSprite(*RootNode(), eventTextList, { -32 * 4.5f, 0, 0 }, "GAME OVER", glm::vec4(1, 0.25f, 0.125f, 1));
       }
     } else if (gamepad.buttonDown & GamePad::START) {
       manager.ReplaceScene(std::make_shared<Title>()); // タイトル画面へ.
     }
   }
-
-  const auto AddBlastSprite = [this](const CollidableSpritePtr& target) {
+ 
+  const auto AddBlastSprite = [this](const glm::vec3& worldPosition) {
     auto p = std::make_shared<Sprite>(tex);
-    p->Position(target->WorldPosition());
+    p->Position(worldPosition);
     auto tween = std::make_shared<TweenAnimation::Sequence>();
     tween->Add(std::make_shared<TweenAnimation::Wait>(0.5f));
     tween->Add(std::make_shared<TweenAnimation::RemoveFromParent>());
@@ -208,21 +235,33 @@ bool MainGame::Update(Manager& manager, float dt)
     lhs->CountervailingHealth(*rhs.get());
     if (rhs->IsDead()) {
       score += 500;
-      AddBlastSprite(rhs);
+      AddBlastSprite(rhs->WorldPosition());
+      std::cout << "Destroy: " << rhs->Name() << std::endl;
     } else {
       score += 10;
     }
   }
   );
 
-  if (!sprite->Invinsible()) {
+  if (!sprite->GameClear() && boss->IsDead()) {
+    sprite->GameClear(true);
+    for (auto e : boss->EscortList()) {
+      if (e && !static_cast<Character::CollidableSprite*>(e)->IsDead()) {
+        AddBlastSprite(e->WorldPosition());
+      }
+    }
+    boss.reset();
+    eventTimer = 2;
+  }
+
+  if (!sprite->GameClear() && !sprite->Invinsible()) {
     const auto DestroyPlayer = [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
       lhs->CountervailingHealth(*rhs.get());
       if (lhs->IsDead()) {
-        AddBlastSprite(lhs);
+        AddBlastSprite(lhs->WorldPosition());
         if (restList.empty()) {
           sprite->GameOver(true);
-          gameoverTimer = 2;
+          eventTimer = 2;
         } else {
           restList.pop_back();
         }

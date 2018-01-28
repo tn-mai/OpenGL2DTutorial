@@ -17,6 +17,7 @@ class Boss : public CollidableSprite
 {
 public:
   Boss(const TexturePtr& tex, const NodePtr& player, std::vector<CollidableSpritePtr>& enemyList, std::vector<CollidableSpritePtr>& enemyShotList, std::vector<FrameAnimation::TimelinePtr>& timelineList);
+  const std::deque<Node*>& EscortList() const { return escortNode.Children(); }
 
 private:
   Node escortNode;

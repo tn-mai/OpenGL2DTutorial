@@ -6,6 +6,7 @@
 #include "../Scene.h"
 #include "../Sprite.h"
 #include "../Character/Player.h"
+#include "../Character/Boss.h"
 #include <memory>
 
 namespace Scene {
@@ -34,10 +35,11 @@ private:
   TexturePtr texBg;
   TimelineList timelineList;
   Character::PlayerPtr sprite;
+  Character::BossPtr boss;
   Sprite background;
 
-  float gameoverTimer = 2;
-  std::vector<Sprite> gameoverList;
+  float eventTimer = 2;
+  std::vector<Sprite> eventTextList;
   int rest = 2;
   std::vector<Sprite> restList;
   int score = 0;

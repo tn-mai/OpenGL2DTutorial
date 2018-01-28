@@ -29,8 +29,11 @@ public:
   void GameOver(bool flag) { gameover = flag; }
   bool GameOver() const { return gameover; }
   bool Invinsible() const { return invinsibleTimer > 0; }
+  void GameClear(bool flag) { gameclear = flag; }
+  bool GameClear() const { return gameclear; }
 
 private:
+  bool gameclear = false;
   bool gameover = false;
   bool controllable = true;
   float invinsibleTimer = 2;

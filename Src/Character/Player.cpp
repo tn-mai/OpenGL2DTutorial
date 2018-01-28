@@ -60,7 +60,7 @@ void Player::RemoveDeadShot()
 void Player::Update(glm::f32 dt)
 {
   CollidableSprite::Update(dt);
-  if (gameover) {
+  if (gameover || gameclear) {
     return;
   }
 
