@@ -88,8 +88,10 @@ private:
   Sprite background;
   Node escortNode;
 
-  float invinsibleTimer = 0.0f;
+  float invinsibleTimer = 2;
+  bool controllable = true;
   bool gameover = false;
+  float gameoverTimer = 2;
   std::vector<Sprite> gameoverList;
   int rest = 2;
   std::vector<Sprite> restList;

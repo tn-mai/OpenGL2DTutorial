@@ -340,7 +340,7 @@ bool MainGame::Update(Manager& manager, float dt)
 {
   GLFWEW::Window& window = GLFWEW::Window::Instance();
   const GamePad& gamepad = window.GetGamePad();
-  if (!gameover) {
+  if (!gameover && controllable) {
     if (gamepad.buttonDown & GamePad::A) {
       PlayerShot(0, 100, 1);
     }
@@ -359,8 +359,14 @@ bool MainGame::Update(Manager& manager, float dt)
       vec = glm::normalize(vec) * 400.0f * dt;
       sprite->Position(sprite->Position() + vec);
     }
-  } else {
-    if (gamepad.buttonDown & GamePad::START) {
+  } else if (gameover) {
+    if (gameoverTimer > 0) {
+      gameoverTimer -= dt;
+      if (gameoverTimer <= 0) {
+        gameoverTimer = 0;
+        Font::SetTextSprite(*RootNode(), gameoverList, { -32 * 4.5f, 0, 0 }, "GAME OVER", glm::vec4(1, 0.25f, 0.125f, 1));
+      }
+    } else if (gamepad.buttonDown & GamePad::START) {
       manager.ReplaceScene(std::make_shared<Title>()); // ƒ^ƒCƒgƒ‹‰æ–Ê‚Ö.
     }
   }
@@ -370,49 +376,63 @@ bool MainGame::Update(Manager& manager, float dt)
     e->Rotation(-escortNode.Rotation());
   }
 
+  const auto AddBlastSprite = [this](const CollidableSpritePtr& target) {
+    auto p = std::make_shared<Sprite>(tex);
+    p->Position(target->WorldPosition());
+    auto tween = std::make_shared<TweenAnimation::Sequence>();
+    tween->Add(std::make_shared<Wait>(0.5f));
+    tween->Add(std::make_shared<RemoveFromParent>());
+    p->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+    p->Animator(std::make_shared<FrameAnimation::Animate>(timelineList[AnimeId_Blast]));
+    nodeList.push_back(p);
+    AddChild(p.get());
+  };
+
   DetectCollision(
     playerShotList.begin(), playerShotList.end(),
     enemyList.begin(), enemyList.end(),
-    [this](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+    [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
     lhs->CountervailingHealth(*rhs.get());
     if (rhs->IsDead()) {
       score += 500;
-      auto p = std::make_shared<Sprite>(tex);
-      p->Position(rhs->WorldPosition());
-      auto tween = std::make_shared<TweenAnimation::Sequence>();
-      tween->Add(std::make_shared<Wait>(0.5f));
-      tween->Add(std::make_shared<RemoveFromParent>());
-      p->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
-      p->Animator(std::make_shared<FrameAnimation::Animate>(timelineList[AnimeId_Blast]));
-      nodeList.push_back(p);
-      AddChild(p.get());
+      AddBlastSprite(rhs);
     } else {
       score += 10;
     }
   }
   );
-  if (invinsibleTimer > 0) {
+
+  if (invinsibleTimer > 2) {
+    invinsibleTimer -= dt;
+    if (invinsibleTimer <= 2) {
+      sprite->Position(glm::vec3(-300, 0, 0));
+      sprite->Color({ 1, 1, 1, 0.5f });
+      sprite->Health(1);
+      controllable = true;
+    }
+  } else if (invinsibleTimer > 0) {
     invinsibleTimer -= dt;
     if (invinsibleTimer <= 0) {
       invinsibleTimer = 0;
       sprite->Color({ 1, 1, 1, 1 });
+      controllable = true;
     }
   } else {
     DetectCollision(
       &sprite, &sprite + 1,
       enemyShotList.begin(), enemyShotList.end(),
-      [this](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+      [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
       lhs->CountervailingHealth(*rhs.get());
       if (lhs->IsDead()) {
+        controllable = false;
+        lhs->Color({ 1, 1, 1, 0 });
+        AddBlastSprite(lhs);
         if (restList.empty()) {
           gameover = true;
-          Font::SetTextSprite(*RootNode(), gameoverList, { -32 * 4.5f, 0, 0 }, "GAME OVER", glm::vec4(1, 0.25f, 0.125f, 1));
+          gameoverTimer = 2;
         } else {
           restList.pop_back();
-          lhs->Position(glm::vec3(-300, 0, 0));
-          lhs->Color({ 1, 1, 1, 0.5f });
-          lhs->Health(1);
-          invinsibleTimer = 2.0f;
+          invinsibleTimer = 3.0f;
         }
       }
     }
