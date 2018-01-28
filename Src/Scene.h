@@ -19,7 +19,7 @@ class Manager;
 class Scene
 {
 public:
-  Scene() = default;
+  Scene();
   virtual ~Scene() = default;
   Scene(const Scene&) = delete;
   Scene& operator=(const Scene&) = delete;

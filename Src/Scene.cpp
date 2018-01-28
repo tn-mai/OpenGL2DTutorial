@@ -8,6 +8,14 @@ namespace Scene {
 /**
 * コンストラクタ.
 */
+Scene::Scene()
+{
+  rootNode.Name("rootNode");
+}
+
+/**
+* コンストラクタ.
+*/
 Manager::Manager(const glm::vec2& screenSize)
 {
   originNode.Name("originNode");
