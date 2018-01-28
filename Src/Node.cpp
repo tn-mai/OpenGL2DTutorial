@@ -29,6 +29,7 @@ void Node::AddChild(Node* node)
 {
   node->parent = this;
   children.push_back(node);
+  node->UpdateTransform();
 }
 
 /**
