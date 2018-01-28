@@ -37,6 +37,7 @@ private:
   bool gameover = false;
   bool controllable = true;
   float invinsibleTimer = 2;
+  float shotInterval = 0;
   std::vector<CollidableSpritePtr> shotList;
 };
 

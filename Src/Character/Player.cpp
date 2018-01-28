@@ -84,8 +84,15 @@ void Player::Update(glm::f32 dt)
   GLFWEW::Window& window = GLFWEW::Window::Instance();
   const GamePad& gamepad = window.GetGamePad();
   if (controllable) {
-    if (gamepad.buttonDown & GamePad::A) {
+    if(gamepad.buttonDown & GamePad::A) {
       Shot(0, 100, 1);
+      shotInterval = 1.0f / 8.0f;
+    } else if (gamepad.buttons & GamePad::A) {
+      shotInterval -= dt;
+      if (shotInterval <= 0) {
+        Shot(0, 100, 1);
+        shotInterval += 1.0f / 8.0f;
+      }
     }
     glm::vec3 vec;
     if (gamepad.buttons & GamePad::DPAD_LEFT) {
