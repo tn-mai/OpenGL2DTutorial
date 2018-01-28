@@ -14,7 +14,9 @@ Node::~Node()
     parent->RemoveChild(this);
   }
   for (auto& e : children) {
-    e->parent = nullptr;
+    if (e) {
+      e->parent = nullptr;
+    }
   }
 }
 
@@ -39,7 +41,7 @@ void Node::RemoveChild(Node* node)
   auto itr = std::find(children.begin(), children.end(), node);
   if (itr != children.end()) {
     (*itr)->parent = nullptr;
-    children.erase(itr);
+    *itr = nullptr;
   }
 }
 
@@ -54,10 +56,12 @@ void Node::UpdateRecursive(float dt)
     tweener->Update(*this, dt);
   }
   Update(dt);
-  auto tmp = children;
-  for (auto& e : tmp) {
-    e->UpdateRecursive(dt);
+  for (auto& e : children) {
+    if (e) {
+      e->UpdateRecursive(dt);
+    }
   }
+  children.erase(std::remove(children.begin(), children.end(), nullptr), children.end());
 }
 
 void Node::UpdateTransform()
@@ -69,7 +73,9 @@ void Node::UpdateTransform()
   transform = glm::rotate(glm::scale(glm::translate(parentTransform, position), glm::vec3(scale, 1.0f)), rotation, glm::vec3(0, 0, 1));
   worldPosition = transform * glm::vec4(0, 0, 0, 1);
   for (auto& e : children) {
-    e->UpdateTransform();
+    if (e) {
+      e->UpdateTransform();
+    }
   }
 }
 

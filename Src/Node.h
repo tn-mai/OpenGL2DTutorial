@@ -5,7 +5,7 @@
 #define NODE_H_INCLUDED
 #include "TweenAnimation.h"
 #include <glm/glm.hpp>
-#include <vector>
+#include <deque>
 #include <string>
 
 /**
@@ -48,7 +48,7 @@ public:
   void AddChild(Node*);
   void RemoveChild(Node*);
   Node* Parent() const { return parent; }
-  const std::vector<Node*>& Children() const { return children; }
+  const std::deque<Node*>& Children() const { return children; }
 
   void UpdateRecursive(float dt);
   void UpdateTransform();
@@ -69,7 +69,7 @@ private:
   glm::vec3 worldPosition;
 
   Node* parent = nullptr; ///< 親ノード.
-  std::vector<Node*> children; ///< 子ノードのリスト.
+  std::deque<Node*> children; ///< 子ノードのリスト.
 
   TweenAnimation::AnimatePtr tweener; ///< トウィーニング制御.
 };
