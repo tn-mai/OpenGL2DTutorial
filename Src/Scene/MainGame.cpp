@@ -418,10 +418,7 @@ bool MainGame::Update(Manager& manager, float dt)
       controllable = true;
     }
   } else {
-    DetectCollision(
-      &sprite, &sprite + 1,
-      enemyShotList.begin(), enemyShotList.end(),
-      [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+    const auto DestroyPlayer = [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
       lhs->CountervailingHealth(*rhs.get());
       if (lhs->IsDead()) {
         controllable = false;
@@ -435,8 +432,10 @@ bool MainGame::Update(Manager& manager, float dt)
           invinsibleTimer = 3.0f;
         }
       }
-    }
-    );
+    };
+
+    DetectCollision(&sprite, &sprite + 1, enemyShotList.begin(), enemyShotList.end(), DestroyPlayer);
+    DetectCollision(&sprite, &sprite + 1, enemyList.begin(), enemyList.end(), DestroyPlayer);
   }
 
   int scoreTmp = score;
