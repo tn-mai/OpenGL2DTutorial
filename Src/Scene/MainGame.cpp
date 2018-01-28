@@ -178,6 +178,11 @@ void DetectCollision(Itr0 b0, Itr0 e0, Itr1 b1, Itr1 e1, Func solver)
   }
 }
 
+enum AnimeId {
+  AnimeId_Enemy_Escort,
+  AnimeId_Blast,
+};
+
 /**
 * アニメーションデータの初期化.
 */
@@ -185,15 +190,31 @@ TimelineList InitAnimationData()
 {
   static const FrameAnimation::KeyFrame escortFrames[] = {
     { 0.000f, glm::vec2(480, 0), glm::vec2(32, 32) },
-  { 0.125f, glm::vec2(480, 96), glm::vec2(32, 32) },
-  { 0.250f, glm::vec2(480, 64), glm::vec2(32, 32) },
-  { 0.375f, glm::vec2(480, 32), glm::vec2(32, 32) },
-  { 0.500f, glm::vec2(480, 0), glm::vec2(32, 32) },
+    { 0.125f, glm::vec2(480, 96), glm::vec2(32, 32) },
+    { 0.250f, glm::vec2(480, 64), glm::vec2(32, 32) },
+    { 0.375f, glm::vec2(480, 32), glm::vec2(32, 32) },
+    { 0.500f, glm::vec2(480, 0), glm::vec2(32, 32) },
+  };
+  static const FrameAnimation::KeyFrame blastFrames[] = {
+    { 0.000f, glm::vec2(416,  0), glm::vec2(32, 32) },
+    { 0.125f, glm::vec2(416, 32), glm::vec2(32, 32) },
+    { 0.250f, glm::vec2(416, 64), glm::vec2(32, 32) },
+    { 0.375f, glm::vec2(416, 96), glm::vec2(32, 32) },
+    { 0.500f, glm::vec2(416, 96), glm::vec2(0, 0) },
+  };
+  static const struct {
+    const FrameAnimation::KeyFrame* begin;
+    const FrameAnimation::KeyFrame* end;
+  } timelines[] = {
+    { std::begin(escortFrames), std::end(escortFrames) },
+    { std::begin(blastFrames), std::end(blastFrames) },
   };
   TimelineList timelineList;
-  FrameAnimation::TimelinePtr timeline = std::make_shared<FrameAnimation::Timeline>();
-  timeline->data.assign(std::begin(escortFrames), std::end(escortFrames));
-  timelineList.push_back(timeline);
+  for (auto& e : timelines) {
+    FrameAnimation::TimelinePtr timeline = std::make_shared<FrameAnimation::Timeline>();
+    timeline->data.assign(e.begin, e.end);
+    timelineList.push_back(timeline);
+  }
 
   return timelineList;
 }
@@ -256,7 +277,7 @@ bool MainGame::Initialize(Manager& manager)
     escort->Name("escort");
     escortNode.AddChild(escort.get());
 
-    auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[0]);
+    auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[AnimeId_Enemy_Escort]);
     escort->Animator(animator);
     auto tween = std::make_shared<TweenAnimation::Sequence>();
     tween->Add(std::make_shared<Wait>(1.0f));
@@ -357,12 +378,12 @@ bool MainGame::Update(Manager& manager, float dt)
     if (rhs->IsDead()) {
       score += 500;
       auto p = std::make_shared<Sprite>(tex);
-      p->Rectangle({ {512 - 96, 64 }, { 32, 32} });
       p->Position(rhs->WorldPosition());
       auto tween = std::make_shared<TweenAnimation::Sequence>();
       tween->Add(std::make_shared<Wait>(0.5f));
       tween->Add(std::make_shared<RemoveFromParent>());
       p->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
+      p->Animator(std::make_shared<FrameAnimation::Animate>(timelineList[AnimeId_Blast]));
       nodeList.push_back(p);
       AddChild(p.get());
     } else {
