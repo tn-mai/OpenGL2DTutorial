@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Character\Character.cpp" />
     <ClCompile Include="Src\Font.cpp" />
     <ClCompile Include="Src\FrameAnimation.cpp" />
     <ClCompile Include="Src\GLFWEW.cpp" />
@@ -142,6 +143,7 @@
     <None Include="Res\Tutorial.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Character\Character.h" />
     <ClInclude Include="Src\Font.h" />
     <ClInclude Include="Src\FrameAnimation.h" />
     <ClInclude Include="Src\DXGIFormat.h" />

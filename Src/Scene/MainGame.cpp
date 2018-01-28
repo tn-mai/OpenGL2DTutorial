@@ -28,7 +28,7 @@ public:
     const glm::vec3 pos = node.Position();
     if (pos.x < area.origin.x || pos.x > area.origin.x + area.size.x ||
       pos.y < area.origin.y || pos.y > area.origin.y + area.size.y) {
-      static_cast<CollidableSprite&>(node).Die();
+      static_cast<Character::CollidableSprite&>(node).Die();
     }
   }
 
@@ -70,17 +70,9 @@ public:
 };
 
 
-std::shared_ptr<CollidableSprite> CollidableSprite::create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)
-{
-  struct Impl : public CollidableSprite {
-    Impl(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1) : CollidableSprite(tex, pos, body, hp) {}
-  };
-  return std::make_unique<Impl>(tex, pos, body, hp);
-}
-
 void MainGame::PlayerShot(glm::f32 rot, glm::f32 vel, int atk)
 {
-  auto shot = CollidableSprite::create(tex, sprite->Position(), { {-32, 8 },{ 32, -8 }  }, 1);
+  auto shot = Character::CollidableSprite::create(tex, sprite->Position(), { {-32, 8 },{ 32, -8 }  }, 1);
   const auto m = glm::rotate(glm::mat4(), glm::radians(rot), glm::vec3(0, 0, 1));
   glm::vec3 velocity = glm::vec4(vel, 0, 0, 1) * m;
   auto tween = std::make_shared<TweenAnimation::Parallelize>();
@@ -96,7 +88,7 @@ void MainGame::PlayerShot(glm::f32 rot, glm::f32 vel, int atk)
 void MainGame::EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
 {
   const glm::vec3 pos = enemy.WorldPosition();
-  auto shot = CollidableSprite::create(tex, pos, { {-4, 4 },{ 4, -4 }  }, atk);
+  auto shot = Character::CollidableSprite::create(tex, pos, { {-4, 4 },{ 4, -4 }  }, atk);
   const glm::vec3 direction = glm::normalize(sprite->WorldPosition() - pos);
   const glm::f32 rot = glm::acos(glm::dot(glm::vec3(-1, 0, 0), direction));
   auto tween = std::make_shared<TweenAnimation::Parallelize>();
@@ -110,10 +102,10 @@ void MainGame::EnemyShot(const Sprite& enemy, glm::f32 vel, int atk)
   AddChild(shot.get());
 }
 
-void FreeDeadSprite(std::vector<CollidableSpritePtr>& targetList)
+void FreeDeadSprite(std::vector<Character::CollidableSpritePtr>& targetList)
 {
   targetList.erase(
-    std::remove_if(targetList.begin(), targetList.end(), [](const CollidableSpritePtr& p) { return p->IsDead(); }), targetList.end()
+    std::remove_if(targetList.begin(), targetList.end(), [](const Character::CollidableSpritePtr& p) { return p->IsDead(); }), targetList.end()
   );
 }
 /**
@@ -136,7 +128,7 @@ void MainGame::FreeAllDeadSprite()
 * @retval true Õ“Ë‚µ‚Ä‚¢‚é.
 * @retval false Õ“Ë‚µ‚Ä‚¢‚È‚¢.
 */
-bool IsCollision(const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs)
+bool IsCollision(const Character::CollidableSpritePtr& lhs, const Character::CollidableSpritePtr& rhs)
 {
   const auto bodyL = lhs->Body();
   const auto bodyR = rhs->Body();
@@ -241,7 +233,7 @@ bool MainGame::Initialize(Manager& manager)
 
   timelineList = InitAnimationData();
 
-  sprite = CollidableSprite::create(tex, glm::vec3(), { {-16, 8},{ 16, -8} });
+  sprite = Character::CollidableSprite::create(tex, glm::vec3(), { {-16, 8},{ 16, -8} });
   sprite->Texture(tex);
   sprite->Rectangle({ glm::vec2(0 ,0), glm::vec2(64, 32) });
   sprite->Name("player");
@@ -273,7 +265,7 @@ bool MainGame::Initialize(Manager& manager)
   for (size_t i = 0; i < 16; ++i) {
     const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / 16.0f), glm::vec3(0, 0, 1));
     const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
-    CollidableSpritePtr escort = CollidableSprite::create(tex, pos, { {-12, 12}, {12, -12} }, 10);
+    CollidableSpritePtr escort = Character::CollidableSprite::create(tex, pos, { {-12, 12}, {12, -12} }, 10);
     escort->Name("escort");
     escortNode.AddChild(escort.get());
 

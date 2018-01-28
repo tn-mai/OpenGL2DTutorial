@@ -1,0 +1,45 @@
+/**
+* @file Character.h
+*/
+#ifndef CHARACTER_CHARACTER_H_INCLUDED
+#define CHARACTER_CHARACTER_H_INCLUDED
+#include "../Sprite.h"
+
+namespace Character {
+
+struct CollisionRect
+{
+  glm::vec2 lt;
+  glm::vec2 rb;
+};
+
+/**
+* 衝突判定付きスプライト.
+*/
+class CollidableSprite : public Sprite
+{
+public:
+  static std::shared_ptr<CollidableSprite> create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1);
+
+  virtual void Update(glm::f32 dt) override;
+  const CollisionRect& Body() const { return worldBody; }
+  int Health() const { return health; }
+  void Health(int n) { health = n; }
+  int SubtractHealth(int n);
+  void Die() { health = 0; }
+  void CountervailingHealth(CollidableSprite& e);
+  bool IsDead() const { return health <= 0; }
+
+private:
+  CollidableSprite(const TexturePtr& tex, const glm::vec3 pos, const CollisionRect& body, int hp = 1);
+
+  CollisionRect localBody;
+  CollisionRect worldBody;
+  int health;
+};
+using NodePtr = std::shared_ptr<Node>;
+using CollidableSpritePtr = std::shared_ptr<CollidableSprite>;
+
+} // namespace Character
+
+#endif // CHARACTER_CHARACTER_H_INCLUDED
