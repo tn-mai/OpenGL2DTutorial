@@ -21,17 +21,17 @@ class CollidableSprite : public Sprite
 public:
   static std::shared_ptr<CollidableSprite> create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1);
 
+  CollidableSprite(const TexturePtr& tex, const glm::vec3 pos, const CollisionRect& body, int hp = 1);
   virtual void Update(glm::f32 dt) override;
+  virtual void Die() { health = 0; }
   const CollisionRect& Body() const { return worldBody; }
   int Health() const { return health; }
   void Health(int n) { health = n; }
   int SubtractHealth(int n);
-  void Die() { health = 0; }
   void CountervailingHealth(CollidableSprite& e);
   bool IsDead() const { return health <= 0; }
 
 private:
-  CollidableSprite(const TexturePtr& tex, const glm::vec3 pos, const CollisionRect& body, int hp = 1);
 
   CollisionRect localBody;
   CollisionRect worldBody;

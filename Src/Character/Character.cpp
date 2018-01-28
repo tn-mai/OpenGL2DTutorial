@@ -47,10 +47,10 @@ void CollidableSprite::Update(glm::f32 dt)
 * @return Œ¸­Œã‚Ìƒwƒ‹ƒX’l.
 */
 int CollidableSprite::SubtractHealth(int n) {
-  if (health >= n) {
+  if (health > n) {
     health -= n;
   } else {
-    health = 0;
+    Die();
   }
   return health;
 }
