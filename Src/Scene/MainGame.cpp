@@ -211,7 +211,6 @@ bool MainGame::Update(Manager& manager, float dt)
           "FOREVER..."
         };
         float y = 192;
-        eventTextList.reserve(256);
         for (auto e : text) {
           const float halfLen = static_cast<float>(std::strlen(e)) * 0.5f;
           Font::SetTextSprite(*RootNode(), eventTextList, { -32 * halfLen + 3, y - 4, 0 }, e, glm::vec4(0, 0, 0, 0.75f));

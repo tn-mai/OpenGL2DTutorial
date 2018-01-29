@@ -44,9 +44,8 @@ void SetChar(Sprite& sprite, int c)
 * @param text       スプライト化するテキスト.
 * @param colorIndex 文字の色を示すインデックス.
 */
-void SetTextSprite(Node& node, std::vector<Sprite>& v, glm::vec3 offset, const char* text, const glm::vec4& color)
+void SetTextSprite(Node& node, SpriteList& v, glm::vec3 offset, const char* text, const glm::vec4& color)
 {
-  v.reserve(std::strlen(text));
   while (*text) {
     if (*text > ' ') {
       v.push_back(Sprite(texFont));

@@ -7,6 +7,7 @@
 #include "../Sprite.h"
 #include "../Character/Player.h"
 #include "../Character/Boss.h"
+#include "../Font.h"
 #include <memory>
 #include <random>
 
@@ -41,11 +42,11 @@ private:
   std::vector<Sprite> bgStarList;
 
   float eventTimer = 2;
-  std::vector<Sprite> eventTextList;
+  Font::SpriteList eventTextList;
   int rest = 2;
   std::vector<Sprite> restList;
   int score = 0;
-  std::vector<Sprite> scoreList;
+  Font::SpriteList scoreList;
 
   std::vector<NodePtr> nodeList;
   std::vector<CollidableSpritePtr> enemyShotList;
