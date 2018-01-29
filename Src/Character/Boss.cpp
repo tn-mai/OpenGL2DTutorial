@@ -111,8 +111,7 @@ Boss::Boss(
     const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
     CollidableSpritePtr escort = std::make_shared<Escort>(tex, pos, [this](const CollidableSpritePtr& shot) { Shot(shot); });
     escort->Name("escort");
-    auto animator = std::make_shared<FrameAnimation::Animate>(timelineList[0]);
-    escort->Animator(animator);
+    escort->Animator(std::make_shared<FrameAnimation::Animate>(timelineList[0]));
     auto tween0 = std::make_shared<TweenAnimation::Parallelize>();
     auto tween1 = std::make_shared<TweenAnimation::Sequence>();
     tween1->Add(std::make_shared<TweenAnimation::Wait>(1.0f));
