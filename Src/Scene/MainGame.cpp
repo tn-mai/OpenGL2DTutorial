@@ -61,17 +61,17 @@ bool IsCollision(const CharacterPtr& lhs, const CharacterPtr& rhs)
 template<typename Itr0, typename Itr1, typename Func>
 void DetectCollision(Itr0 b0, Itr0 e0, Itr1 b1, Itr1 e1, Func solver)
 {
-  for (; b0 != e0; ++b0) {
-    if ((*b0)->IsDead()) {
+  for (Itr0 itr0 = b0; itr0 != e0; ++itr0) {
+    if ((*itr0)->IsDead()) {
       continue;
     }
-    for (; b1 != e1; ++b1) {
-      if ((*b1)->IsDead()) {
+    for (Itr1 itr1 = b1; itr1 != e1; ++itr1) {
+      if ((*itr1)->IsDead()) {
         continue;
       }
-      if (IsCollision(*b0, *b1)) {
-        solver(*b0, *b1);
-        if ((*b0)->IsDead()) {
+      if (IsCollision(*itr0, *itr1)) {
+        solver(*itr0, *itr1);
+        if ((*itr0)->IsDead()) {
           break;
         }
       }
