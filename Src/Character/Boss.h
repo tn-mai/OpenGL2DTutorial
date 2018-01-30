@@ -16,9 +16,9 @@ using BossPtr = std::shared_ptr<Boss>;
 class Boss : public Character
 {
 public:
-  Boss(const TexturePtr& tex, const NodePtr& player, std::vector<CollidableSpritePtr>& enemyList, std::vector<CollidableSpritePtr>& enemyShotList, std::vector<FrameAnimation::TimelinePtr>& timelineList);
+  Boss(const TexturePtr& tex, const NodePtr& player, std::vector<CharacterPtr>& enemyList, std::vector<CharacterPtr>& enemyShotList, std::vector<FrameAnimation::TimelinePtr>& timelineList);
   const std::deque<Node*>& EscortList() const { return escortNode.Children(); }
-  void Shot(const CollidableSpritePtr& shot)
+  void Shot(const CharacterPtr& shot)
   {
     enemyShotList.push_back(shot);
     Parent()->AddChild(shot.get());
@@ -27,8 +27,8 @@ public:
 private:
   Node escortNode;
   NodePtr player;
-  std::vector<CollidableSpritePtr>& enemyList;
-  std::vector<CollidableSpritePtr>& enemyShotList;
+  std::vector<CharacterPtr>& enemyList;
+  std::vector<CharacterPtr>& enemyShotList;
 };
 
 } // namespace GameObject

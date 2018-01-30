@@ -46,8 +46,8 @@ private:
   Font::SpriteList scoreList;
 
   std::vector<NodePtr> nodeList;
-  std::vector<CollidableSpritePtr> enemyShotList;
-  std::vector<CollidableSpritePtr> enemyList;
+  std::vector<CharacterPtr> enemyShotList;
+  std::vector<CharacterPtr> enemyList;
 
   std::mt19937 random;
 };

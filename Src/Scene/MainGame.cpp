@@ -12,10 +12,10 @@
 
 namespace Scene {
 
-void FreeDeadSprite(std::vector<CollidableSpritePtr>& targetList)
+void FreeDeadSprite(std::vector<CharacterPtr>& targetList)
 {
   targetList.erase(
-    std::remove_if(targetList.begin(), targetList.end(), [](const CollidableSpritePtr& p) { return p->IsDead(); }), targetList.end()
+    std::remove_if(targetList.begin(), targetList.end(), [](const CharacterPtr& p) { return p->IsDead(); }), targetList.end()
   );
 }
 /**
@@ -37,7 +37,7 @@ void MainGame::FreeAllDeadSprite()
 * @retval true Õ“Ë‚µ‚Ä‚¢‚é.
 * @retval false Õ“Ë‚µ‚Ä‚¢‚È‚¢.
 */
-bool IsCollision(const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs)
+bool IsCollision(const CharacterPtr& lhs, const CharacterPtr& rhs)
 {
   const auto bodyL = lhs->Body();
   const auto bodyR = rhs->Body();
@@ -249,7 +249,7 @@ bool MainGame::Update(Manager& manager, float dt)
   DetectCollision(
     sprite->ShotList().begin(), sprite->ShotList().end(),
     enemyList.begin(), enemyList.end(),
-    [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+    [&](const CharacterPtr& lhs, const CharacterPtr& rhs) {
     lhs->CountervailingHealth(*rhs.get());
     if (rhs->IsDead()) {
       score += 500;
@@ -274,7 +274,7 @@ bool MainGame::Update(Manager& manager, float dt)
   }
 
   if (!sprite->GameClear() && !sprite->Invinsible()) {
-    const auto DestroyPlayer = [&](const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs) {
+    const auto DestroyPlayer = [&](const CharacterPtr& lhs, const CharacterPtr& rhs) {
       lhs->CountervailingHealth(*rhs.get());
       if (lhs->IsDead()) {
         AddBlastSprite(lhs->WorldPosition(), 2);

@@ -5,10 +5,13 @@
 #define CHARACTER_CHARACTER_H_INCLUDED
 #include "../Sprite.h"
 
+/**
+* 衝突判定用矩形.
+*/
 struct CollisionRect
 {
-  glm::vec2 lt;
-  glm::vec2 rb;
+  glm::vec2 lt; ///< 左上座標.
+  glm::vec2 rb; ///< 右下座標.
 };
 
 /**
@@ -36,7 +39,7 @@ private:
   int health;
 };
 using NodePtr = std::shared_ptr<Node>;
-using CollidableSpritePtr = std::shared_ptr<Character>;
+using CharacterPtr = std::shared_ptr<Character>;
 
 /**
 * 範囲外に出たら殺す.

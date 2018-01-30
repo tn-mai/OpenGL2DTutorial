@@ -24,7 +24,7 @@ public:
   virtual void Die();
 
   void Shot(glm::f32 rot, glm::f32 vel, int atk);
-  std::vector<CollidableSpritePtr>& ShotList() { return shotList; }
+  std::vector<CharacterPtr>& ShotList() { return shotList; }
   void RemoveDeadShot();
   void GameOver(bool flag) { gameover = flag; }
   bool GameOver() const { return gameover; }
@@ -38,7 +38,7 @@ private:
   bool controllable = true;
   float invinsibleTimer = 2;
   float shotInterval = 0;
-  std::vector<CollidableSpritePtr> shotList;
+  std::vector<CharacterPtr> shotList;
 };
 
 } // namespace GameObject

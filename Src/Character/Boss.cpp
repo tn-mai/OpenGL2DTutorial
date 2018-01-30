@@ -10,7 +10,7 @@ namespace GameObject {
 class Escort : public Character
 {
 public:
-  Escort(const TexturePtr& tex, const glm::vec3& pos, std::function<void(const CollidableSpritePtr&)> shotFunc) :
+  Escort(const TexturePtr& tex, const glm::vec3& pos, std::function<void(const CharacterPtr&)> shotFunc) :
     Character(tex, pos, { {-12, 12}, {12, -12} }, 10),
     shotFunc(shotFunc)
   {}
@@ -31,7 +31,7 @@ public:
     shotFunc(shot);
   }
 private:
-  std::function<void(const CollidableSpritePtr&)> shotFunc;
+  std::function<void(const CharacterPtr&)> shotFunc;
 };
 
 class AimingShot : public TweenAnimation::Tween
@@ -86,8 +86,8 @@ private:
 Boss::Boss(
   const TexturePtr& tex,
   const NodePtr& player,
-  std::vector<CollidableSpritePtr>& enemyList,
-  std::vector<CollidableSpritePtr>& enemyShotList,
+  std::vector<CharacterPtr>& enemyList,
+  std::vector<CharacterPtr>& enemyShotList,
   std::vector<FrameAnimation::TimelinePtr>& timelineList
 ) :
   Character(tex, glm::vec3(256, 0, 0), { {-48, 112},{48, -112} }, 100),
@@ -109,7 +109,7 @@ Boss::Boss(
   for (size_t i = 0; i < 16; ++i) {
     const auto m = glm::rotate(glm::mat4(), glm::radians(static_cast<float>(i * 360) / 16.0f), glm::vec3(0, 0, 1));
     const glm::vec4 pos = m * glm::vec4(0, 144, 0, 1);
-    CollidableSpritePtr escort = std::make_shared<Escort>(tex, pos, [this](const CollidableSpritePtr& shot) { Shot(shot); });
+    CharacterPtr escort = std::make_shared<Escort>(tex, pos, [this](const CharacterPtr& shot) { Shot(shot); });
     escort->Name("escort");
     escort->Animator(std::make_shared<FrameAnimation::Animate>(timelineList[0]));
     auto tween0 = std::make_shared<TweenAnimation::Parallelize>();

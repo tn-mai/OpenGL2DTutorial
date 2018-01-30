@@ -49,7 +49,7 @@ void Player::Shot(glm::f32 rot, glm::f32 vel, int atk)
 void Player::RemoveDeadShot()
 {
   shotList.erase(
-    std::remove_if(shotList.begin(), shotList.end(), [](const CollidableSpritePtr& p) { return p->IsDead(); }),
+    std::remove_if(shotList.begin(), shotList.end(), [](const CharacterPtr& p) { return p->IsDead(); }),
     shotList.end()
   );
 }
