@@ -209,6 +209,18 @@ private:
   glm::f32 rotation;
 };
 
+/**
+* 範囲外に出たら親ノードから削除する.
+*/
+class RemoveIfOutOfArea : public TweenAnimation::Tween {
+public:
+  RemoveIfOutOfArea(const glm::vec2& origin, const glm::vec2& size);
+  virtual void Update(Node& node, glm::f32 dt) override;
+private:
+  glm::vec2 origin;
+  glm::vec2 size;
+};
+
 } // namespace TweenAnimation
 
 #endif // TWEENANIMATION_H_INCLUDED

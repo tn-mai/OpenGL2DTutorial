@@ -253,4 +253,30 @@ void Rotation::Update(Node& node, glm::f32 dt)
 {
   node.Rotation(start + rotation * dt);
 }
+
+/**
+* コンストラクタ.
+*/
+RemoveIfOutOfArea::RemoveIfOutOfArea(const glm::vec2& origin, const glm::vec2& size) :
+  Tween(100, TweenAnimation::EasingType::Linear), origin(origin), size(size)
+{
+}
+
+/**
+* 更新.
+*
+* @param node    更新対象のノード.
+* @param elapsed 経過時間.
+*/
+void RemoveIfOutOfArea::Update(Node& node, glm::f32 dt)
+{
+  const glm::vec3 pos = node.Position();
+  if (pos.x < origin.x || pos.x > origin.x + size.x ||
+    pos.y < origin.y || pos.y > origin.y + size.y) {
+    if (node.Parent()) {
+      node.Parent()->RemoveChild(&node);
+    }
+  }
+}
+
 } // namespace TweenAnimation

@@ -41,15 +41,4 @@ private:
 using NodePtr = std::shared_ptr<Node>;
 using CharacterPtr = std::shared_ptr<Character>;
 
-/**
-* ”ÍˆÍŠO‚Éo‚½‚çE‚·.
-*/
-class RemoveIfOutOfArea : public TweenAnimation::Tween {
-public:
-  RemoveIfOutOfArea(const Rect& r);
-  virtual void Update(Node& node, glm::f32 dt) override;
-private:
-  Rect area;
-};
-
 #endif // CHARACTER_CHARACTER_H_INCLUDED

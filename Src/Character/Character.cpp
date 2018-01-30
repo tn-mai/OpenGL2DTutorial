@@ -4,25 +4,6 @@
 #include "Character.h"
 
 /**
-* コンストラクタ.
-*/
-RemoveIfOutOfArea::RemoveIfOutOfArea(const Rect& r) : Tween(100, TweenAnimation::EasingType::Linear), area(r)
-{
-}
-
-/**
-* 更新.
-*/
-void RemoveIfOutOfArea::Update(Node& node, glm::f32 dt)
-{
-  const glm::vec3 pos = node.Position();
-  if (pos.x < area.origin.x || pos.x > area.origin.x + area.size.x ||
-    pos.y < area.origin.y || pos.y > area.origin.y + area.size.y) {
-    static_cast<Character&>(node).Die();
-  }
-}
-
-/**
 * 衝突判定付きスプライトを作成する.
 */
 CharacterPtr Character::Create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)

@@ -23,7 +23,7 @@ public:
     const glm::f32 rot = glm::acos(glm::dot(glm::vec3(-1, 0, 0), direction));
     auto tween = std::make_shared<TweenAnimation::Parallelize>();
     tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / velocity, direction * 2000.0f));
-    tween->Add(std::make_shared<RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+    tween->Add(std::make_shared<TweenAnimation::RemoveIfOutOfArea>(glm::vec2(-400, -300), glm::vec2(800, 600)));
     shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
     shot->Rectangle({ {512 - 32 - 16, 0},{16, 16} });
     shot->Rotation(rot);
@@ -65,7 +65,7 @@ public:
       const glm::f32 velocity = 100.0f;
       auto tween = std::make_shared<TweenAnimation::Parallelize>();
       tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / velocity, direction * 2000.0f));
-      tween->Add(std::make_shared<RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+      tween->Add(std::make_shared<TweenAnimation::RemoveIfOutOfArea>(glm::vec2(-400, -300), glm::vec2(800, 600)));
       shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
       shot->Rectangle({ {512 - 32 - 16 - 16, 0},{16, 16} });
       shot->Name("shot(boss)");

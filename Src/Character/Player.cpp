@@ -35,7 +35,7 @@ void Player::Shot(glm::f32 rot, glm::f32 vel, int atk)
   glm::vec3 velocity = glm::vec4(vel, 0, 0, 1) * m;
   auto tween = std::make_shared<TweenAnimation::Parallelize>();
   tween->Add(std::make_shared<TweenAnimation::MoveBy>(0.5f, glm::vec3(800, 0, 0)));
-  tween->Add(std::make_shared<RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+  tween->Add(std::make_shared<TweenAnimation::RemoveIfOutOfArea>(glm::vec2(-400, -300), glm::vec2(800, 600)));
   shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
   shot->Rectangle({ {64, 0},{64, 16} });
   shot->Name("shot(p)");
@@ -49,7 +49,7 @@ void Player::Shot(glm::f32 rot, glm::f32 vel, int atk)
 void Player::RemoveDeadShot()
 {
   shotList.erase(
-    std::remove_if(shotList.begin(), shotList.end(), [](const CharacterPtr& p) { return p->IsDead(); }),
+    std::remove_if(shotList.begin(), shotList.end(), [](const CharacterPtr& p) { return p->IsDead() || !p->Parent(); }),
     shotList.end()
   );
 }

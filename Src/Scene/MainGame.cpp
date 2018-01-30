@@ -15,7 +15,7 @@ namespace Scene {
 void FreeDeadSprite(std::vector<CharacterPtr>& targetList)
 {
   targetList.erase(
-    std::remove_if(targetList.begin(), targetList.end(), [](const CharacterPtr& p) { return p->IsDead(); }), targetList.end()
+    std::remove_if(targetList.begin(), targetList.end(), [](const CharacterPtr& p) { return p->IsDead() || !p->Parent(); }), targetList.end()
   );
 }
 /**
