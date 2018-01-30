@@ -12,10 +12,10 @@
 
 namespace Scene {
 
-void FreeDeadSprite(std::vector<Character::CollidableSpritePtr>& targetList)
+void FreeDeadSprite(std::vector<CollidableSpritePtr>& targetList)
 {
   targetList.erase(
-    std::remove_if(targetList.begin(), targetList.end(), [](const Character::CollidableSpritePtr& p) { return p->IsDead(); }), targetList.end()
+    std::remove_if(targetList.begin(), targetList.end(), [](const CollidableSpritePtr& p) { return p->IsDead(); }), targetList.end()
   );
 }
 /**
@@ -37,7 +37,7 @@ void MainGame::FreeAllDeadSprite()
 * @retval true Õ“Ë‚µ‚Ä‚¢‚é.
 * @retval false Õ“Ë‚µ‚Ä‚¢‚È‚¢.
 */
-bool IsCollision(const Character::CollidableSpritePtr& lhs, const Character::CollidableSpritePtr& rhs)
+bool IsCollision(const CollidableSpritePtr& lhs, const CollidableSpritePtr& rhs)
 {
   const auto bodyL = lhs->Body();
   const auto bodyR = rhs->Body();
@@ -142,8 +142,8 @@ bool MainGame::Initialize(Manager& manager)
 
   timelineList = InitAnimationData();
 
-  sprite = Character::Player::Create(tex);
-  boss = std::make_shared<Character::Boss>(tex, sprite, enemyList, enemyShotList, timelineList);
+  sprite = GameObject::Player::Create(tex);
+  boss = std::make_shared<GameObject::Boss>(tex, sprite, enemyList, enemyShotList, timelineList);
   enemyList.push_back(boss);
 
   background.Texture(texBg);
@@ -264,7 +264,7 @@ bool MainGame::Update(Manager& manager, float dt)
   if (!sprite->GameClear() && boss->IsDead()) {
     sprite->GameClear(true);
     for (auto e : boss->EscortList()) {
-      if (e && !static_cast<Character::CollidableSprite*>(e)->IsDead()) {
+      if (e && !static_cast<Character*>(e)->IsDead()) {
         AddBlastSprite(e->WorldPosition());
       }
     }

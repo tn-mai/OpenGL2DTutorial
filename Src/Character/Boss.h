@@ -5,7 +5,7 @@
 #define CHARACTER_BOSS_H_INCLUDED
 #include "Character.h"
 
-namespace Character {
+namespace GameObject {
 
 class Boss;
 using BossPtr = std::shared_ptr<Boss>;
@@ -13,7 +13,7 @@ using BossPtr = std::shared_ptr<Boss>;
 /**
 * É{ÉX.
 */
-class Boss : public CollidableSprite
+class Boss : public Character
 {
 public:
   Boss(const TexturePtr& tex, const NodePtr& player, std::vector<CollidableSpritePtr>& enemyList, std::vector<CollidableSpritePtr>& enemyShotList, std::vector<FrameAnimation::TimelinePtr>& timelineList);
@@ -31,6 +31,6 @@ private:
   std::vector<CollidableSpritePtr>& enemyShotList;
 };
 
-} // namespace Character
+} // namespace GameObject
 
 #endif // CHARACTER_BOSS_H_INCLUDED

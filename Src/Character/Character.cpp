@@ -3,8 +3,6 @@
 */
 #include "Character.h"
 
-namespace Character {
-
 /**
 * コンストラクタ.
 */
@@ -20,17 +18,17 @@ void RemoveIfOutOfArea::Update(Node& node, glm::f32 dt)
   const glm::vec3 pos = node.Position();
   if (pos.x < area.origin.x || pos.x > area.origin.x + area.size.x ||
     pos.y < area.origin.y || pos.y > area.origin.y + area.size.y) {
-    static_cast<Character::CollidableSprite&>(node).Die();
+    static_cast<Character&>(node).Die();
   }
 }
 
 /**
 * 衝突判定付きスプライトを作成する.
 */
-CollidableSpritePtr CollidableSprite::create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)
+CollidableSpritePtr Character::create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)
 {
-  struct Impl : public CollidableSprite {
-    Impl(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1) : CollidableSprite(tex, pos, body, hp) {}
+  struct Impl : public Character {
+    Impl(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1) : Character(tex, pos, body, hp) {}
   };
   return std::make_shared<Impl>(tex, pos, body, hp);
 }
@@ -38,7 +36,7 @@ CollidableSpritePtr CollidableSprite::create(const TexturePtr& tex, const glm::v
 /**
 * コンストラクタ.
 */
-CollidableSprite::CollidableSprite(const TexturePtr& tex, const glm::vec3 pos, const CollisionRect& body, int hp) :
+Character::Character(const TexturePtr& tex, const glm::vec3 pos, const CollisionRect& body, int hp) :
   Sprite(tex),
   localBody(body),
   worldBody(body),
@@ -50,7 +48,7 @@ CollidableSprite::CollidableSprite(const TexturePtr& tex, const glm::vec3 pos, c
 /**
 * 更新.
 */
-void CollidableSprite::Update(glm::f32 dt)
+void Character::Update(glm::f32 dt)
 {
   Sprite::Update(dt);
   const glm::vec2 pos = WorldPosition();
@@ -65,7 +63,7 @@ void CollidableSprite::Update(glm::f32 dt)
 *
 * @return 減少後のヘルス値.
 */
-int CollidableSprite::SubtractHealth(int n) {
+int Character::SubtractHealth(int n) {
   if (health > n) {
     health -= n;
   } else {
@@ -79,11 +77,9 @@ int CollidableSprite::SubtractHealth(int n) {
 *
 * @param e 相殺するオブジェクト.
 */
-void CollidableSprite::CountervailingHealth(CollidableSprite& e)
+void Character::CountervailingHealth(Character& e)
 {
   const auto h0 = health;
   SubtractHealth(e.health);
   e.SubtractHealth(h0);
 }
-
-} // namespace Character

@@ -5,25 +5,25 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <functional>
 
-namespace Character {
+namespace GameObject {
 
-class Escort : public CollidableSprite
+class Escort : public Character
 {
 public:
   Escort(const TexturePtr& tex, const glm::vec3& pos, std::function<void(const CollidableSpritePtr&)> shotFunc) :
-    CollidableSprite(tex, pos, { {-12, 12}, {12, -12} }, 10),
+    Character(tex, pos, { {-12, 12}, {12, -12} }, 10),
     shotFunc(shotFunc)
   {}
 
   void AimingShot(const NodePtr& target, glm::f32 velocity, int attack)
   {
     const glm::vec3 pos = WorldPosition();
-    auto shot = Character::CollidableSprite::create(Texture(), pos, { {-4, 4 },{ 4, -4 }  }, attack);
+    auto shot = Character::create(Texture(), pos, { {-4, 4 },{ 4, -4 }  }, attack);
     const glm::vec3 direction = glm::normalize(target->WorldPosition() - pos);
     const glm::f32 rot = glm::acos(glm::dot(glm::vec3(-1, 0, 0), direction));
     auto tween = std::make_shared<TweenAnimation::Parallelize>();
     tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / velocity, direction * 2000.0f));
-    tween->Add(std::make_shared<Character::RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+    tween->Add(std::make_shared<RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
     shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
     shot->Rectangle({ {512 - 32 - 16, 0},{16, 16} });
     shot->Rotation(rot);
@@ -59,13 +59,13 @@ public:
     }
     const glm::vec3 pos = boss.WorldPosition();
     for (glm::f32 d = 0; d < 360.0f; d += 360.0f / 16.0f) {
-      auto shot = Character::CollidableSprite::create(boss.Texture(), pos, { {-2, 2 },{ 2, -2 } }, 2);
+      auto shot = Character::create(boss.Texture(), pos, { {-2, 2 },{ 2, -2 } }, 2);
       const glm::f32 rot = glm::radians(degree + d);
       const glm::vec3 direction = glm::rotate(glm::mat4(), rot, glm::vec3(0, 0, 1)) * glm::vec4(-1, 0, 0, 1);
       const glm::f32 velocity = 100.0f;
       auto tween = std::make_shared<TweenAnimation::Parallelize>();
       tween->Add(std::make_shared<TweenAnimation::MoveBy>(2000.0f / velocity, direction * 2000.0f));
-      tween->Add(std::make_shared<Character::RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
+      tween->Add(std::make_shared<RemoveIfOutOfArea>(Rect{ glm::vec2(-400, -300), glm::vec2(800, 600) }));
       shot->Tweener(std::make_shared<TweenAnimation::Animate>(tween));
       shot->Rectangle({ {512 - 32 - 16 - 16, 0},{16, 16} });
       shot->Name("shot(boss)");
@@ -90,7 +90,7 @@ Boss::Boss(
   std::vector<CollidableSpritePtr>& enemyShotList,
   std::vector<FrameAnimation::TimelinePtr>& timelineList
 ) :
-  CollidableSprite(tex, glm::vec3(256, 0, 0), { {-48, 112},{48, -112} }, 100),
+  Character(tex, glm::vec3(256, 0, 0), { {-48, 112},{48, -112} }, 100),
   player(player),
   enemyList(enemyList),
   enemyShotList(enemyShotList)
@@ -169,4 +169,4 @@ Boss::Boss(
   }
 }
 
-} // namespace Character
+} // namespace GameObject

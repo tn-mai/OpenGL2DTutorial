@@ -30,14 +30,11 @@ public:
   void EnemyShot(const Sprite& sprite, glm::f32 vel, int atk);
 
 private:
-  using NodePtr = Character::NodePtr;
-  using CollidableSpritePtr = Character::CollidableSpritePtr;
-
   TexturePtr tex;
   TexturePtr texBg;
   TimelineList timelineList;
-  Character::PlayerPtr sprite;
-  Character::BossPtr boss;
+  GameObject::PlayerPtr sprite;
+  GameObject::BossPtr boss;
   Sprite background;
   std::vector<Sprite> bgStarList;
 

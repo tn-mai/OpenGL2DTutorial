@@ -6,7 +6,7 @@
 #include "Character.h"
 #include <vector>
 
-namespace Character {
+namespace GameObject {
 
 class Player;
 using PlayerPtr = std::shared_ptr<Player>;
@@ -14,7 +14,7 @@ using PlayerPtr = std::shared_ptr<Player>;
 /**
 * Ž©‹@.
 */
-class Player : public CollidableSprite
+class Player : public Character
 {
 public:
   static PlayerPtr Create(const TexturePtr& tex);
@@ -41,6 +41,6 @@ private:
   std::vector<CollidableSpritePtr> shotList;
 };
 
-} // namespace Character
+} // namespace GameObject
 
 #endif // CHARACTER_PLAYER_H_INCLUDED

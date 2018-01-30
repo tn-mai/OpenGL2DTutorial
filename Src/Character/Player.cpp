@@ -6,7 +6,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <algorithm>
 
-namespace Character {
+namespace GameObject {
 
 /**
 * 自機を作成する.
@@ -19,7 +19,7 @@ PlayerPtr Player::Create(const TexturePtr& tex)
 /**
 * コンストラクタ.
 */
-Player::Player(const TexturePtr& tex) : CollidableSprite(tex, glm::vec3(-300, 0, 0), { {-16, 8},{ 16, -8} })
+Player::Player(const TexturePtr& tex) : Character(tex, glm::vec3(-300, 0, 0), { {-16, 8},{ 16, -8} })
 {
   Rectangle({ glm::vec2(0 ,0), glm::vec2(64, 32) });
   Name("player");
@@ -30,7 +30,7 @@ Player::Player(const TexturePtr& tex) : CollidableSprite(tex, glm::vec3(-300, 0,
 */
 void Player::Shot(glm::f32 rot, glm::f32 vel, int atk)
 {
-  auto shot = Character::CollidableSprite::create(Texture(), Position(), { {-32, 8 },{ 32, -8 }  }, 1);
+  auto shot = Character::create(Texture(), Position(), { {-32, 8 },{ 32, -8 }  }, 1);
   const auto m = glm::rotate(glm::mat4(), glm::radians(rot), glm::vec3(0, 0, 1));
   glm::vec3 velocity = glm::vec4(vel, 0, 0, 1) * m;
   auto tween = std::make_shared<TweenAnimation::Parallelize>();
@@ -59,7 +59,7 @@ void Player::RemoveDeadShot()
 */
 void Player::Update(glm::f32 dt)
 {
-  CollidableSprite::Update(dt);
+  Character::Update(dt);
   if (gameover || gameclear) {
     return;
   }
@@ -121,11 +121,10 @@ void Player::Update(glm::f32 dt)
 */
 void Player::Die()
 {
-  CollidableSprite::Die();
+  Character::Die();
   controllable = false;
   invinsibleTimer = 3;
   Color({ 1, 1, 1, 0 });
 }
 
-
-} // namespace Character
+} // namespace GameObject
