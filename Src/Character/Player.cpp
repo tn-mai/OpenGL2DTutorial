@@ -30,7 +30,7 @@ Player::Player(const TexturePtr& tex) : Character(tex, glm::vec3(-300, 0, 0), { 
 */
 void Player::Shot(glm::f32 rot, glm::f32 vel, int atk)
 {
-  auto shot = Character::create(Texture(), Position(), { {-32, 8 },{ 32, -8 }  }, 1);
+  auto shot = Character::Create(Texture(), Position(), { {-32, 8 },{ 32, -8 }  }, 1);
   const auto m = glm::rotate(glm::mat4(), glm::radians(rot), glm::vec3(0, 0, 1));
   glm::vec3 velocity = glm::vec4(vel, 0, 0, 1) * m;
   auto tween = std::make_shared<TweenAnimation::Parallelize>();

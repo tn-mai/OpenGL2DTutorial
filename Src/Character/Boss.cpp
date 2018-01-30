@@ -18,7 +18,7 @@ public:
   void AimingShot(const NodePtr& target, glm::f32 velocity, int attack)
   {
     const glm::vec3 pos = WorldPosition();
-    auto shot = Character::create(Texture(), pos, { {-4, 4 },{ 4, -4 }  }, attack);
+    auto shot = Character::Create(Texture(), pos, { {-4, 4 },{ 4, -4 }  }, attack);
     const glm::vec3 direction = glm::normalize(target->WorldPosition() - pos);
     const glm::f32 rot = glm::acos(glm::dot(glm::vec3(-1, 0, 0), direction));
     auto tween = std::make_shared<TweenAnimation::Parallelize>();
@@ -59,7 +59,7 @@ public:
     }
     const glm::vec3 pos = boss.WorldPosition();
     for (glm::f32 d = 0; d < 360.0f; d += 360.0f / 16.0f) {
-      auto shot = Character::create(boss.Texture(), pos, { {-2, 2 },{ 2, -2 } }, 2);
+      auto shot = Character::Create(boss.Texture(), pos, { {-2, 2 },{ 2, -2 } }, 2);
       const glm::f32 rot = glm::radians(degree + d);
       const glm::vec3 direction = glm::rotate(glm::mat4(), rot, glm::vec3(0, 0, 1)) * glm::vec4(-1, 0, 0, 1);
       const glm::f32 velocity = 100.0f;

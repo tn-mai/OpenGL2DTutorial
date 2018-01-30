@@ -25,7 +25,7 @@ void RemoveIfOutOfArea::Update(Node& node, glm::f32 dt)
 /**
 * 衝突判定付きスプライトを作成する.
 */
-CharacterPtr Character::create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)
+CharacterPtr Character::Create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)
 {
   struct Impl : public Character {
     Impl(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1) : Character(tex, pos, body, hp) {}

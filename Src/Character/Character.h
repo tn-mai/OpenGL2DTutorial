@@ -20,7 +20,7 @@ struct CollisionRect
 class Character : public Sprite
 {
 public:
-  static std::shared_ptr<Character> create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1);
+  static std::shared_ptr<Character> Create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1);
 
   Character(const TexturePtr& tex, const glm::vec3 pos, const CollisionRect& body, int hp = 1);
   virtual void Update(glm::f32 dt) override;
