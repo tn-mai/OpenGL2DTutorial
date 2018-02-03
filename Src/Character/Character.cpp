@@ -8,10 +8,7 @@
 */
 CharacterPtr Character::Create(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp)
 {
-  struct Impl : public Character {
-    Impl(const TexturePtr& tex, const glm::vec3& pos, const CollisionRect& body, int hp = 1) : Character(tex, pos, body, hp) {}
-  };
-  return std::make_shared<Impl>(tex, pos, body, hp);
+  return std::make_shared<Character>(tex, pos, body, hp);
 }
 
 /**
@@ -63,4 +60,25 @@ void Character::CountervailingHealth(Character& e)
   const auto h0 = health;
   SubtractHealth(e.health);
   e.SubtractHealth(h0);
+}
+
+/**
+* Õ“Ëó‘Ô‚ð’²‚×‚é.
+*
+* @param lhs ¶•Ó‚ÌÕ“Ë”»’è‘ÎÛ.
+* @param rhs ‰E•Ó‚ÌÕ“Ë”»’è‘ÎÛ.
+*
+* @retval true Õ“Ë‚µ‚Ä‚¢‚é.
+* @retval false Õ“Ë‚µ‚Ä‚¢‚È‚¢.
+*/
+bool IsCollision(const CharacterPtr& lhs, const CharacterPtr& rhs)
+{
+  const auto bodyL = lhs->Body();
+  const auto bodyR = rhs->Body();
+  if (bodyL.lt.x < bodyR.rb.x && bodyL.rb.x > bodyR.lt.x) {
+    if (bodyL.lt.y > bodyR.rb.y && bodyL.rb.y < bodyR.lt.y) {
+      return true;
+    }
+  }
+  return false;
 }
